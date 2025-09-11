@@ -19,7 +19,7 @@
 #include <string>
 #include <cmath>
 #include <queue>
-
+#include "Wall.h"
 #include "raylib.h"
 #include "Player.h"
 
@@ -28,11 +28,18 @@
 //------------------------------------------------------------------------------------
 Player vro;
 
+std::vector<Wall> walls;
+
+void coll(float distance, char axis);
 
 int main(void)
 {
-   
-    
+    Wall one(100, 100, {450, 100});
+    walls.push_back(one);
+    Wall two(100, 100, {-300, -200});
+    walls.push_back(two);
+    Wall three(100, 100, {250, -300});
+    walls.push_back(three);
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -66,25 +73,25 @@ int main(void)
         vro.position.y -= 10;
       }
     if (IsKeyDown(KEY_A)){
-        vro.position.x -= 10;
+        coll(-10, 'x');
       }
     if (IsKeyDown(KEY_S)){
         vro.position.y += 10;
       }
     if (IsKeyDown(KEY_D)){
-        vro.position.x += 10;
+        coll(10, 'x');
       }
     if (IsKeyDown(KEY_UP)){
         vro.position.y -= 10;
       }
     if (IsKeyDown(KEY_LEFT)){
-        vro.position.x -= 10;
+        coll(-10, 'x');
       }
     if (IsKeyDown(KEY_DOWN)){
         vro.position.y += 10;
       }
     if (IsKeyDown(KEY_RIGHT)){
-        vro.position.x += 10;
+        coll(10, 'x');
       }
       
         BeginDrawing();
@@ -98,9 +105,10 @@ int main(void)
                 ClearBackground(WHITE);
                 //draws the player
                 DrawRectangle(vro.position.x,vro.position.y,vro.width,vro.height,ORANGE);
-                DrawRectangle(100,300,100,10,BLUE);
-                DrawRectangle(200,-100,10,100,BLUE);
-                DrawRectangle(-200,100,100,100,BLUE);
+                for(int i = 0; i < walls.size(); i++){
+                    DrawRectangle(walls[i].width, walls[i].height,walls[i].position.x,walls[i].position.y,BLUE);
+                }
+                
 
                 
                 EndMode2D();
@@ -123,4 +131,24 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
     return 0;
+}
+void coll(float distance, char axis){
+    if (axis == 'x'){
+        for(int i = 0; i < walls.size(); i++){
+            if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                if(vro.position.x < walls[i].position.x){
+                    vro.position.x = walls[i].position.x + vro.width;
+                    return;
+                }else{
+                    vro.position.x = walls[i].position.x + walls[i].width;
+                    return;
+                }
+            }else{
+                vro.position.x += distance;
+                return;
+            }
+        }
+    }else if (axis == 'y'){
+        
+    }
 }
