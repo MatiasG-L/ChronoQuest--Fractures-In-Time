@@ -36,10 +36,7 @@ int main(void)
 {
     Wall one(100, 100, {450, 100});
     walls.push_back(one);
-    Wall two(100, 100, {-300, -200});
-    walls.push_back(two);
-    Wall three(100, 100, {250, -300});
-    walls.push_back(three);
+
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -70,25 +67,25 @@ int main(void)
         camera.target = {vro.position.x, vro.position.y};
       // Draw, where the scene actually gets rendered and drawn out
         if (IsKeyDown(KEY_W)){
-        vro.position.y -= 10;
+        coll(-10, 'y');
       }
     if (IsKeyDown(KEY_A)){
         coll(-10, 'x');
       }
     if (IsKeyDown(KEY_S)){
-        vro.position.y += 10;
+        coll(10, 'y');
       }
     if (IsKeyDown(KEY_D)){
         coll(10, 'x');
       }
     if (IsKeyDown(KEY_UP)){
-        vro.position.y -= 10;
+        coll(-10, 'y');
       }
     if (IsKeyDown(KEY_LEFT)){
         coll(-10, 'x');
       }
     if (IsKeyDown(KEY_DOWN)){
-        vro.position.y += 10;
+        coll(10, 'y');
       }
     if (IsKeyDown(KEY_RIGHT)){
         coll(10, 'x');
@@ -106,7 +103,7 @@ int main(void)
                 //draws the player
                 DrawRectangle(vro.position.x,vro.position.y,vro.width,vro.height,ORANGE);
                 for(int i = 0; i < walls.size(); i++){
-                    DrawRectangle(walls[i].width, walls[i].height,walls[i].position.x,walls[i].position.y,BLUE);
+                    DrawRectangle(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,BLUE);
                 }
                 
 
@@ -133,22 +130,39 @@ int main(void)
     return 0;
 }
 void coll(float distance, char axis){
+    bool collision = false;
     if (axis == 'x'){
         for(int i = 0; i < walls.size(); i++){
             if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
-                if(vro.position.x < walls[i].position.x){
-                    vro.position.x = walls[i].position.x + vro.width;
-                    return;
+                if(vro.position.x < walls[i].position.x + walls[i].width / 2){
+                    vro.position.x = walls[i].position.x - vro.width;
+                    collision = true;
                 }else{
                     vro.position.x = walls[i].position.x + walls[i].width;
-                    return;
+                    collision = true;
                 }
-            }else{
-                vro.position.x += distance;
-                return;
             }
         }
     }else if (axis == 'y'){
-        
+        for(int i = 0; i < walls.size(); i++){
+            if (CheckCollisionRecs({vro.position.x, vro.position.y - distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
+                if (vro.position.y < walls[i].position.y + walls[i].height / 2){
+                    vro.position.y = walls[i].position.y + vro.height;
+                    collision = true;
+                }else{
+                    vro.position.y = walls[i].position.y - walls[i].height;
+                    collision = true;
+                }
+            }   
+        }
+    
+    
+    }
+    if (!collision){
+        if (axis == 'x'){
+        vro.position.x += distance;
+        }else if (axis == 'y'){
+            vro.position.y += distance;
+        }
     }
 }
