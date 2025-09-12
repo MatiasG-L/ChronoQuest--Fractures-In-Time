@@ -19,7 +19,7 @@
 #include <string>
 #include <cmath>
 #include <queue>
-
+#include "Wall.h"
 #include "raylib.h"
 #include "Player.h"
 
@@ -28,11 +28,15 @@
 //------------------------------------------------------------------------------------
 Player vro;
 
+std::vector<Wall> walls;
+
+void coll(float distance, char axis);
 
 int main(void)
 {
-   
-    
+    Wall one(100, 100, {450, 100});
+    walls.push_back(one);
+
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -63,28 +67,28 @@ int main(void)
         camera.target = {vro.position.x, vro.position.y};
       // Draw, where the scene actually gets rendered and drawn out
         if (IsKeyDown(KEY_W)){
-        vro.position.y -= 10;
+        coll(-10, 'y');
       }
     if (IsKeyDown(KEY_A)){
-        vro.position.x -= 10;
+        coll(-10, 'x');
       }
     if (IsKeyDown(KEY_S)){
-        vro.position.y += 10;
+        coll(10, 'y');
       }
     if (IsKeyDown(KEY_D)){
-        vro.position.x += 10;
+        coll(10, 'x');
       }
     if (IsKeyDown(KEY_UP)){
-        vro.position.y -= 10;
+        coll(-10, 'y');
       }
     if (IsKeyDown(KEY_LEFT)){
-        vro.position.x -= 10;
+        coll(-10, 'x');
       }
     if (IsKeyDown(KEY_DOWN)){
-        vro.position.y += 10;
+        coll(10, 'y');
       }
     if (IsKeyDown(KEY_RIGHT)){
-        vro.position.x += 10;
+        coll(10, 'x');
       }
       
         BeginDrawing();
@@ -98,9 +102,10 @@ int main(void)
                 ClearBackground(WHITE);
                 //draws the player
                 DrawRectangle(vro.position.x,vro.position.y,vro.width,vro.height,ORANGE);
-                DrawRectangle(100,300,100,10,BLUE);
-                DrawRectangle(200,-100,10,100,BLUE);
-                DrawRectangle(-200,100,100,100,BLUE);
+                for(int i = 0; i < walls.size(); i++){
+                    DrawRectangle(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,BLUE);
+                }
+                
 
                 
                 EndMode2D();
@@ -123,4 +128,41 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
     return 0;
+}
+void coll(float distance, char axis){
+    bool collision = false;
+    if (axis == 'x'){
+        for(int i = 0; i < walls.size(); i++){
+            if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                if(vro.position.x < walls[i].position.x + walls[i].width / 2){
+                    vro.position.x = walls[i].position.x - vro.width;
+                    collision = true;
+                }else{
+                    vro.position.x = walls[i].position.x + walls[i].width;
+                    collision = true;
+                }
+            }
+        }
+    }else if (axis == 'y'){
+        for(int i = 0; i < walls.size(); i++){
+            if (CheckCollisionRecs({vro.position.x, vro.position.y - distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
+                if (vro.position.y < walls[i].position.y + walls[i].height / 2){
+                    vro.position.y = walls[i].position.y + vro.height;
+                    collision = true;
+                }else{
+                    vro.position.y = walls[i].position.y - walls[i].height;
+                    collision = true;
+                }
+            }   
+        }
+    
+    
+    }
+    if (!collision){
+        if (axis == 'x'){
+        vro.position.x += distance;
+        }else if (axis == 'y'){
+            vro.position.y += distance;
+        }
+    }
 }
