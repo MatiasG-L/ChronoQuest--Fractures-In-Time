@@ -21,13 +21,13 @@
 #include <queue>
 
 #include "raylib.h"
-
+#include "Player.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
 
-
+std::vector<Player> players;
 
 int main(void)
 {

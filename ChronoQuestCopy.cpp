@@ -36,7 +36,13 @@ int main(void)
 {
     Wall one(100, 100, {450, 100});
     walls.push_back(one);
-
+    Wall two(300, 100, {450, 100});
+    walls.push_back(two);
+    Wall three(100, 300, {450, 100});
+    walls.push_back(three);
+    Wall four(600, 100, {450, 100});
+    walls.push_back(four);
+    
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -145,12 +151,12 @@ void coll(float distance, char axis){
         }
     }else if (axis == 'y'){
         for(int i = 0; i < walls.size(); i++){
-            if (CheckCollisionRecs({vro.position.x, vro.position.y - distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
+            if (CheckCollisionRecs({vro.position.x, vro.position.y + distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
                 if (vro.position.y < walls[i].position.y + walls[i].height / 2){
-                    vro.position.y = walls[i].position.y + vro.height;
+                    vro.position.y = walls[i].position.y - vro.height;
                     collision = true;
                 }else{
-                    vro.position.y = walls[i].position.y - walls[i].height;
+                    vro.position.y = walls[i].position.y + walls[i].height;
                     collision = true;
                 }
             }   
