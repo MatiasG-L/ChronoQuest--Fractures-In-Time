@@ -44,11 +44,21 @@ class Player{
         int Speed;
     }SuitStats;
     
-    Suit suitStats;
+    SuitStats suitStats;
     
     int weight;
 
     
     
-    Player(){}
+    Player(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats){
+        this->width = width;
+        this->height = height;
+        this->position = position;
+        this->name =  name;
+        this->rank = rank;
+        this->expRankUp = expRankUp;
+        this->stats = stats;
+        this->suit = suit;
+        this->suitStats = suitStats;
+    }
 };

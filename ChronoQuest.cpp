@@ -22,12 +22,15 @@
 
 #include "raylib.h"
 #include "Player.h"
+#include "Enemy.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-
-std::vector<Player> players;
+//(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
+Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10}, {10, 10, 10});
+//(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats)
+Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, {10,10,10,10,10});
 
 int main(void)
 {
@@ -46,7 +49,8 @@ int main(void)
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
-        
+    Vector2 newTarget = {900, 450};
+    float zoomTarget = 0.5;
     //initializes camera values
     Camera2D camera = { 0 };
     camera.offset = {screenWidth/2.0f, screenHeight/2.0f };
@@ -60,10 +64,28 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
+      if(camera.target.x > 890){
+          newTarget = {700, 450};
+      }else if(camera.target.x < 710){
+          newTarget = {900, 450};
+      }
+      camera.target = {lerp(camera.target.x, newTarget.x, 0.03),450};
+      
+      if(camera.zoom < 0.75){
+          zoomTarget = 1;
+          
+      }else if(camera.zoom > 0.95){
+          zoomTarget = 0.7;
+      }
+      
+      camera.zoom = lerp(camera.zoom, zoomTarget, 0.01);
+      
+      
+      
       
       // Draw, where the scene actually gets rendered and drawn out
+        
 
-      
         BeginDrawing();
             
             
@@ -74,9 +96,13 @@ int main(void)
                   
                 ClearBackground(WHITE);
                 
+                
+                DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
+                DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, RED);
 
                 
                 EndMode2D();
+                //UI elements past this point
                 
                 
            
