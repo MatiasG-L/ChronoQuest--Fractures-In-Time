@@ -19,6 +19,7 @@
 #include <string>
 #include <cmath>
 #include <queue>
+
 #include "Wall.h"
 #include "raylib.h"
 #include "Player.h"
@@ -36,7 +37,13 @@ int main(void)
 {
     Wall one(100, 100, {450, 100});
     walls.push_back(one);
-
+    Wall two(300, 100, {450, 100});
+    walls.push_back(two);
+    Wall three(100, 300, {450, 100});
+    walls.push_back(three);
+    Wall four(600, 100, {450, 100});
+    walls.push_back(four);
+    
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -109,7 +116,7 @@ int main(void)
 
                 
                 EndMode2D();
-                
+                //UI elements past this point
                 
            
         //ends the drawing phase of the program     
@@ -129,28 +136,42 @@ int main(void)
 
     return 0;
 }
+//function for collision handleling that takes paramaters for the distance desired to move and the axis on which to move
 void coll(float distance, char axis){
+    //boolean to keep trabk of whether a collision was detected in th function
     bool collision = false;
+    //collision on x axis
     if (axis == 'x'){
+        //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < walls.size(); i++){
+            //uses raylibs built in collision detection functino given two Rec objects as paramaters 
             if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                //determines if the players starting position is on the left of the objected collided with
                 if(vro.position.x < walls[i].position.x + walls[i].width / 2){
+                    //sets the players position to the edge of the object hit (left)
                     vro.position.x = walls[i].position.x - vro.width;
                     collision = true;
                 }else{
+                    //sets the players position to the edge of the object hit () right
                     vro.position.x = walls[i].position.x + walls[i].width;
                     collision = true;
                 }
             }
         }
+     //collision on y axis
     }else if (axis == 'y'){
+        //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < walls.size(); i++){
-            if (CheckCollisionRecs({vro.position.x, vro.position.y - distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
+            //uses raylibs built in collision detection functino given two Rec objects as paramaters 
+            if (CheckCollisionRecs({vro.position.x, vro.position.y + distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
+                //determines if the players starting position is above of the objected collided with
                 if (vro.position.y < walls[i].position.y + walls[i].height / 2){
-                    vro.position.y = walls[i].position.y + vro.height;
+                    //sets the players position to the edge of the object hit (above)
+                    vro.position.y = walls[i].position.y - vro.height;
                     collision = true;
                 }else{
-                    vro.position.y = walls[i].position.y - walls[i].height;
+                    //sets the players position to the edge of the object hit (below)
+                    vro.position.y = walls[i].position.y + walls[i].height;
                     collision = true;
                 }
             }   
@@ -158,6 +179,7 @@ void coll(float distance, char axis){
     
     
     }
+    //if no collisino was detected then the player is free to move the desired distance
     if (!collision){
         if (axis == 'x'){
         vro.position.x += distance;
