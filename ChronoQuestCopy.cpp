@@ -32,7 +32,7 @@ Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10
 std::vector<Wall> walls;
 
 void coll(float distance, char axis);
-
+char plmove;
 int main(void)
 {
     Wall one(100, 100, {200, 100}, BLUE);
@@ -76,29 +76,54 @@ int main(void)
         camera.target = {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2};
       // Draw, where the scene actually gets rendered and drawn out
         if (IsKeyDown(KEY_W)){
-        coll(-10, 'y');
-      }
-    if (IsKeyDown(KEY_A)){
-        coll(-10, 'x');
-      }
-    if (IsKeyDown(KEY_S)){
-        coll(10, 'y');
-      }
-    if (IsKeyDown(KEY_D)){
-        coll(10, 'x');
-      }
-    if (IsKeyDown(KEY_UP)){
-        coll(-10, 'y');
-      }
-    if (IsKeyDown(KEY_LEFT)){
-        coll(-10, 'x');
-      }
-    if (IsKeyDown(KEY_DOWN)){
-        coll(10, 'y');
-      }
-    if (IsKeyDown(KEY_RIGHT)){
-        coll(10, 'x');
-      }
+            coll(-10, 'y');
+            plmove = 'y';
+          }
+        if (IsKeyDown(KEY_A)){
+            coll(-10, 'x');
+            plmove = 'x';
+          }
+        if (IsKeyDown(KEY_S)){
+            coll(10, 'y');
+            plmove = 'y';
+          }
+        if (IsKeyDown(KEY_D)){
+            coll(10, 'x');
+            plmove = 'x';
+          }
+        if (IsKeyDown(KEY_UP)){
+            coll(-10, 'y');
+            plmove = 'y';
+          }
+        if (IsKeyDown(KEY_LEFT)){
+            coll(-10, 'x');
+            plmove = 'x';
+          }
+        if (IsKeyDown(KEY_DOWN)){
+            coll(10, 'y');
+            plmove = 'y';
+          }
+        if (IsKeyDown(KEY_RIGHT)){
+            coll(10, 'x');
+            plmove = 'x';
+          }
+      
+      
+    for (int i = 0; i < walls.size(); i++){
+        for (int j = 0; j < walls.size(); j++){
+            if (walls[i].moveable){
+               if (plmove == 'x'){
+                   if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
+                       if (walls[i].position.x < walls[j].position.x + walls[j].width / 2){
+                           
+                       }
+                   }
+               }else if (plmove == 'y'){
+                   
+               }
+            }
+        }
+    }
       
         BeginDrawing();
             
@@ -154,7 +179,10 @@ void coll(float distance, char axis){
                 if(vro.position.x < walls[i].position.x + walls[i].width / 2){
                     if(walls[i].moveable){
                     walls[i].position.x += (vro.position.x + vro.width) - walls[i].position.x + 10;
-                    
+                    if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                        vro.position.x = walls[i].position.x - vro.width;
+                        collision = true;
+                    }
                 }else{
                     vro.position.x = walls[i].position.x - vro.width;
                     collision = true;
@@ -165,7 +193,10 @@ void coll(float distance, char axis){
                 }else{
                     if(walls[i].moveable){
                         walls[i].position.x -= (walls[i].position.x + walls[i].width) - vro.position.x + 10;
-                        
+                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                        vro.position.x = walls[i].position.x + walls[i].width;
+                        collision = true;
+                    }
                     }else{
                         vro.position.x = walls[i].position.x + walls[i].width;
                         collision = true;
@@ -183,8 +214,13 @@ void coll(float distance, char axis){
             if (CheckCollisionRecs({vro.position.x, vro.position.y + distance, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width, walls[i].height})){
                 //determines if the players starting position is above of the objected collided with
                 if (vro.position.y < walls[i].position.y + walls[i].height / 2){
-                    if(walls[i].moveable){
+                    //checks if the wall is moveable and pushes it
+                    if (walls[i].moveable){
                         walls[i].position.y += (vro.position.y + vro.height) - walls[i].position.y + 10;
+                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                        vro.position.y = walls[i].position.y - vro.height;
+                        collision = true;
+                    }
                     }else{
                         vro.position.y = walls[i].position.y - vro.height;
                         collision = true;
@@ -194,6 +230,11 @@ void coll(float distance, char axis){
                 }else{
                     if (walls[i].moveable){
                         walls[i].position.y -= (walls[i].position.y + walls[i].height) - vro.position.y + 10;
+                        walls[i].position.y += (vro.position.y + vro.height) - walls[i].position.y + 10;
+                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                        vro.position.y = walls[i].position.y + walls[i].height;
+                        collision = true;
+                    }
                     }else{
                         vro.position.y = walls[i].position.y + walls[i].height;
                         collision = true;
