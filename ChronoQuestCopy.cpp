@@ -43,7 +43,7 @@ int main(void)
     walls.push_back(three);
     Wall four(600, 100, {0, -150}, BLUE);
     walls.push_back(four);
-    Wall five(100, 100, {450, 100}, true, GREEN);
+    Wall five(100, 100, {200, 200}, true, GREEN);
     walls.push_back(five);
     
     // Initialization
@@ -111,15 +111,23 @@ int main(void)
       
     for (int i = 0; i < walls.size(); i++){
         for (int j = 0; j < walls.size(); j++){
-            if (walls[i].moveable){
+            if (walls[i].moveable && j != i){
                if (plmove == 'x'){
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        if (walls[i].position.x < walls[j].position.x + walls[j].width / 2){
-                           
+                           walls[i].position.x = walls[j].position.x - walls[i].width;
+                       }else{
+                           walls[i].position.x = walls[j].position.x + walls[j].width;
                        }
                    }
                }else if (plmove == 'y'){
-                   
+                   if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
+                       if (walls[i].position.y < walls[j].position.y + (float)walls[j].height / 2){
+                           walls[i].position.y = walls[j].position.y - walls[i].height;
+                       }else{
+                           walls[i].position.y = walls[j].position.y + walls[j].height;
+                       }
+                   }
                }
             }
         }
@@ -230,7 +238,6 @@ void coll(float distance, char axis){
                 }else{
                     if (walls[i].moveable){
                         walls[i].position.y -= (walls[i].position.y + walls[i].height) - vro.position.y + 10;
-                        walls[i].position.y += (vro.position.y + vro.height) - walls[i].position.y + 10;
                         if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
                         vro.position.y = walls[i].position.y + walls[i].height;
                         collision = true;
