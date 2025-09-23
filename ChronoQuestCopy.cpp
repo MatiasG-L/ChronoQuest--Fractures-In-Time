@@ -45,6 +45,8 @@ int main(void)
     walls.push_back(four);
     Wall five(100, 100, {200, 200}, true, GREEN);
     walls.push_back(five);
+    Wall six(100, 100, {300, 0}, true, GREEN);
+    walls.push_back(six);
     
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -55,7 +57,7 @@ int main(void)
     
     
     
-    InitWindow(screenWidth, screenHeight, " |Pokemon Purple Version| "); //initilisation of the window 
+    InitWindow(screenWidth, screenHeight, " |ChronoQuest: Fractures In Time| "); //initilisation of the window 
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
@@ -116,16 +118,28 @@ int main(void)
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        if (walls[i].position.x < walls[j].position.x + walls[j].width / 2){
                            walls[i].position.x = walls[j].position.x - walls[i].width;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                           vro.position.x = walls[i].position.x - vro.width;
+                           }
                        }else{
                            walls[i].position.x = walls[j].position.x + walls[j].width;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                           vro.position.x = walls[i].position.x + walls[i].width;
+                           }
                        }
                    }
                }else if (plmove == 'y'){
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        if (walls[i].position.y < walls[j].position.y + (float)walls[j].height / 2){
                            walls[i].position.y = walls[j].position.y - walls[i].height;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                           vro.position.y = walls[i].position.y - vro.height;
+                           }
                        }else{
                            walls[i].position.y = walls[j].position.y + walls[j].height;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                           vro.position.y = walls[i].position.y + walls[i].height;
+                           }
                        }
                    }
                }
@@ -186,11 +200,9 @@ void coll(float distance, char axis){
                 //determines if the players starting position is on the left of the objected collided with
                 if(vro.position.x < walls[i].position.x + walls[i].width / 2){
                     if(walls[i].moveable){
+                    
+                    
                     walls[i].position.x += (vro.position.x + vro.width) - walls[i].position.x + 10;
-                    if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
-                        vro.position.x = walls[i].position.x - vro.width;
-                        collision = true;
-                    }
                 }else{
                     vro.position.x = walls[i].position.x - vro.width;
                     collision = true;
@@ -201,10 +213,7 @@ void coll(float distance, char axis){
                 }else{
                     if(walls[i].moveable){
                         walls[i].position.x -= (walls[i].position.x + walls[i].width) - vro.position.x + 10;
-                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
-                        vro.position.x = walls[i].position.x + walls[i].width;
-                        collision = true;
-                    }
+                        
                     }else{
                         vro.position.x = walls[i].position.x + walls[i].width;
                         collision = true;
@@ -228,7 +237,7 @@ void coll(float distance, char axis){
                         if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
                         vro.position.y = walls[i].position.y - vro.height;
                         collision = true;
-                    }
+                        }
                     }else{
                         vro.position.y = walls[i].position.y - vro.height;
                         collision = true;
@@ -238,10 +247,7 @@ void coll(float distance, char axis){
                 }else{
                     if (walls[i].moveable){
                         walls[i].position.y -= (walls[i].position.y + walls[i].height) - vro.position.y + 10;
-                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
-                        vro.position.y = walls[i].position.y + walls[i].height;
-                        collision = true;
-                    }
+                        
                     }else{
                         vro.position.y = walls[i].position.y + walls[i].height;
                         collision = true;
