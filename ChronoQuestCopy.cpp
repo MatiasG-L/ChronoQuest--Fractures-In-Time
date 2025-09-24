@@ -41,12 +41,14 @@ int main(void)
     walls.push_back(two);
     Wall three(100, 300, {450, -300}, BLUE);
     walls.push_back(three);
-    Wall four(600, 100, {0, -150}, BLUE);
+    Wall four(600, 100, {0, -150},true, GREEN);
     walls.push_back(four);
     Wall five(100, 100, {200, 200}, true, GREEN);
     walls.push_back(five);
     Wall six(100, 100, {300, 0}, true, GREEN);
     walls.push_back(six);
+    Wall sv(100,100, {0,300}, true, GREEN);
+    walls.push_back(sv);
     
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -113,7 +115,7 @@ int main(void)
       
     for (int i = 0; i < walls.size(); i++){
         for (int j = 0; j < walls.size(); j++){
-            if (walls[i].moveable && j != i){
+            if (walls[i].moveable && j != i && abs(distance(walls[i].position, vro.position)) < abs(distance(walls[j].position, vro.position))){
                if (plmove == 'x'){
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        if (walls[i].position.x < walls[j].position.x + walls[j].width / 2){
