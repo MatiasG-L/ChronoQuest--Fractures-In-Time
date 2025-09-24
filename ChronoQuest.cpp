@@ -49,8 +49,8 @@ int main(void)
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
-    Vector2 newTarget = {900, 450};
-    float zoomTarget = 0.5;
+    Vector2 newTarget = {800,450};
+    float zoomTarget = 1;
     //initializes camera values
     Camera2D camera = { 0 };
     camera.offset = {screenWidth/2.0f, screenHeight/2.0f };
@@ -64,21 +64,22 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
-      if(camera.target.x > 890){
-          newTarget = {700, 450};
-      }else if(camera.target.x < 710){
-          newTarget = {900, 450};
-      }
-      camera.target = {lerp(camera.target.x, newTarget.x, 0.03),450};
-      
-      if(camera.zoom < 0.75){
+      if(IsKeyPressed(KEY_UP)){
+          newTarget = {player.position.x + player.width/2, player.position.y + player.height/2};
+          zoomTarget = 1.2;
+      }else if(IsKeyPressed(KEY_DOWN)){
+          zoomTarget = 1.5;
+          newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2};
+      }else if(IsKeyPressed(KEY_LEFT)){
+          newTarget = {800,450};
           zoomTarget = 1;
-          
-      }else if(camera.zoom > 0.95){
-          zoomTarget = 0.7;
       }
+      camera.target = {lerp(camera.target.x, newTarget.x, 0.03), lerp(camera.target.y, newTarget.y, 0.03)};
       
-      camera.zoom = lerp(camera.zoom, zoomTarget, 0.01);
+      camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
+      
+      
+      
       
       
       
