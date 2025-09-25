@@ -49,6 +49,8 @@ int main(void)
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
+    Texture2D buttonF = LoadTexture("Assests/UI/FButton.png");
+    
     Vector2 newTarget = {800,450};
     float zoomTarget = 1;
     //initializes camera values
@@ -65,7 +67,7 @@ int main(void)
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
       if(IsKeyPressed(KEY_UP)){
-          newTarget = {player.position.x + player.width/2, player.position.y + player.height/2};
+          newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
           zoomTarget = 1.2;
       }else if(IsKeyPressed(KEY_DOWN)){
           zoomTarget = 1.5;
@@ -94,18 +96,22 @@ int main(void)
             //anything drawn inside of the BeginMode2D() and EndMode2D() are going to be drawn onto the world and wont move with the camera but anything drawn after EndMode2D() is drawn onto the screen and moves with the camera useful for UI
                 BeginMode2D(camera);
                 
+                
                   
                 ClearBackground(WHITE);
                 
                 
                 DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
                 DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, RED);
-
+                    
                 
                 EndMode2D();
                 //UI elements past this point
                 
-                
+                DrawTextureEx(buttonF, {1300,650}, 0, 10, WHITE);
+                DrawTextureEx(buttonF, {850,650}, 0, 10, WHITE);
+                DrawTextureEx(buttonF, {550,650}, 0, 10, WHITE);
+                DrawTextureEx(buttonF, {550,650}, 0, 10, WHITE);
            
         //ends the drawing phase of the program     
         EndDrawing();
