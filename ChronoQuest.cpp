@@ -107,11 +107,12 @@ int main(void)
                 
                 EndMode2D();
                 //UI elements past this point
+                DrawRectangleRounded({475, 710, 1200, 200}, 4, 4, CLEARBASE(BLACK, 100));
                 
-                DrawTextureEx(buttonF, {1300,650}, 0, 10, WHITE);
-                DrawTextureEx(buttonF, {850,650}, 0, 10, WHITE);
-                DrawTextureEx(buttonF, {550,650}, 0, 10, WHITE);
-                DrawTextureEx(buttonF, {550,650}, 0, 10, WHITE);
+                DrawTextureEx(buttonF, {1300,650}, 0, 10, YELLOW);
+                DrawTextureEx(buttonF, {1025,650}, 0, 10, GREEN);
+                DrawTextureEx(buttonF, {750,650}, 0, 10, BLUE);
+                DrawTextureEx(buttonF, {475,650}, 0, 10, WHITE);
            
         //ends the drawing phase of the program     
         EndDrawing();
