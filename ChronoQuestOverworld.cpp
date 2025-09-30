@@ -81,13 +81,33 @@ int main(void)
         
         camera.target = lerpV(camera.target, {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2}, 0.2);
       
+        if (IsKeyDown(KEY_D) && IsKeyDown(KEY_W)){
+            coll(7, 'x');
+            coll(-7, 'y');
+            plmove = 'x';
+          }
+        else if (IsKeyDown(KEY_D) && IsKeyDown(KEY_S)){
+            coll(7, 'x');
+            coll(7, 'y');
+            plmove = 'x';
+          }
+        else if (IsKeyDown(KEY_A) && IsKeyDown(KEY_W)){
+            coll(-7, 'x');
+            coll(-7, 'y');
+            plmove = 'x';
+          }
+         else if (IsKeyDown(KEY_A) && IsKeyDown(KEY_S)){
+            coll(-7, 'x');
+            coll(7, 'y');
+            plmove = 'x';
+          }
       
       
-      
-        if (IsKeyDown(KEY_W)){
+        else if (IsKeyDown(KEY_W)){
             coll(-10, 'y');
             plmove = 'y';
           }
+        
         else if (IsKeyDown(KEY_A)){
             coll(-10, 'x');
             plmove = 'x';
@@ -104,6 +124,26 @@ int main(void)
             coll(-10, 'y');
             plmove = 'y';
           }
+         else if (IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_UP)){
+            coll(7, 'x');
+            coll(-7, 'y');
+            plmove = 'x';
+          }
+        else if (IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_DOWN)){
+            coll(7, 'x');
+            coll(7, 'y');
+            plmove = 'x';
+          }
+        else if (IsKeyDown(KEY_LEFT) && IsKeyDown(KEY_UP)){
+            coll(-7, 'x');
+            coll(-7, 'y');
+            plmove = 'x';
+          }
+         else if (IsKeyDown(KEY_LEFT) && IsKeyDown(KEY_DOWN)){
+            coll(-7, 'x');
+            coll(7, 'y');
+            plmove = 'x';
+          }
         else if (IsKeyDown(KEY_LEFT)){
             coll(-10, 'x');
             plmove = 'x';
@@ -116,7 +156,6 @@ int main(void)
             coll(10, 'x');
             plmove = 'x';
           }
-      
      // code where wall collision is preformed agianst other walls (pushable walls)
     for (int i = 0; i < walls.size(); i++){
         for (int j = 0; j < walls.size(); j++){
@@ -203,6 +242,7 @@ int main(void)
 }
 //function for collision handleling that takes paramaters for the distance desired to move and the axis on which to move
 void coll(float distance, char axis){
+    
     //boolean to keep trabk of whether a collision was detected in th function
     bool collision = false;
     //collision on x axis
