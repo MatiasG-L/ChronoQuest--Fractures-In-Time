@@ -45,7 +45,7 @@ int main(void)
     
     
     
-    InitWindow(screenWidth, screenHeight, " |Pokemon Purple Version| "); //initilisation of the window 
+    InitWindow(screenWidth, screenHeight, " |ChronoQuest: Fractures In Time| "); //initilisation of the window 
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
