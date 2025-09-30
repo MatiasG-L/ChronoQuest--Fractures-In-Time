@@ -41,7 +41,7 @@ int main(void)
     walls.push_back(two);
     Wall three(100, 300, {450, -300}, BLUE);
     walls.push_back(three);
-    Wall four(600, 100, {0, -150},true, GREEN);
+    Wall four(600, 600, {0, -150},true, GREEN);
     walls.push_back(four);
     Wall five(100, 100, {200, 200}, true, GREEN);
     walls.push_back(five);
@@ -77,66 +77,80 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
-        camera.target = {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2};
-      // Draw, where the scene actually gets rendered and drawn out
+    
+        
+        camera.target = lerpV(camera.target, {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2}, 0.2);
+      
+      
+      
+      
         if (IsKeyDown(KEY_W)){
             coll(-10, 'y');
             plmove = 'y';
           }
-        if (IsKeyDown(KEY_A)){
+        else if (IsKeyDown(KEY_A)){
             coll(-10, 'x');
             plmove = 'x';
           }
-        if (IsKeyDown(KEY_S)){
+        else if (IsKeyDown(KEY_S)){
             coll(10, 'y');
             plmove = 'y';
           }
-        if (IsKeyDown(KEY_D)){
+        else if (IsKeyDown(KEY_D)){
             coll(10, 'x');
             plmove = 'x';
           }
-        if (IsKeyDown(KEY_UP)){
+        else if (IsKeyDown(KEY_UP)){
             coll(-10, 'y');
             plmove = 'y';
           }
-        if (IsKeyDown(KEY_LEFT)){
+        else if (IsKeyDown(KEY_LEFT)){
             coll(-10, 'x');
             plmove = 'x';
           }
-        if (IsKeyDown(KEY_DOWN)){
+        else if (IsKeyDown(KEY_DOWN)){
             coll(10, 'y');
             plmove = 'y';
           }
-        if (IsKeyDown(KEY_RIGHT)){
+        else if (IsKeyDown(KEY_RIGHT)){
             coll(10, 'x');
             plmove = 'x';
           }
       
-      
+     // code where wall collision is preformed agianst other walls (pushable walls)
     for (int i = 0; i < walls.size(); i++){
         for (int j = 0; j < walls.size(); j++){
+            //only checks collision if the wall at i is a movable wall and, its not the same as wall at j and, if wall at i is closer to the player than wall at j
             if (walls[i].moveable && j != i && abs(distance(walls[i].position, vro.position)) < abs(distance(walls[j].position, vro.position))){
+                //splits collision between the x and y axis respectivly 
                if (plmove == 'x'){
+                   //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
+                       //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
                        if (walls[i].position.x < walls[j].position.x + walls[j].width / 2){
                            walls[i].position.x = walls[j].position.x - walls[i].width;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
-                           vro.position.x = walls[i].position.x - vro.width;
+                            vro.position.x = walls[i].position.x - vro.width;
                            }
+                       //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
                        }else{
                            walls[i].position.x = walls[j].position.x + walls[j].width;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
-                           vro.position.x = walls[i].position.x + walls[i].width;
+                            vro.position.x = walls[i].position.x + walls[i].width;
                            }
                        }
                    }
+                //splits collision between the x and y axis respectivly 
                }else if (plmove == 'y'){
+                   //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
+                       //splits the way collision is handled depending if the wall is above or below of its collision respectivly
                        if (walls[i].position.y < walls[j].position.y + (float)walls[j].height / 2){
                            walls[i].position.y = walls[j].position.y - walls[i].height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
                            vro.position.y = walls[i].position.y - vro.height;
                            }
+                       //splits the way collision is handled depending if the wall is above or below of its collision respectivly
                        }else{
                            walls[i].position.y = walls[j].position.y + walls[j].height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
@@ -148,7 +162,7 @@ int main(void)
             }
         }
     }
-      
+        // Draw, where the scene actually gets rendered and drawn out
         BeginDrawing();
             
             
@@ -202,25 +216,27 @@ void coll(float distance, char axis){
                 //determines if the players starting position is on the left of the objected collided with
                 if(vro.position.x < walls[i].position.x + walls[i].width / 2){
                     if(walls[i].moveable){
-                    
-                    
+                    //if the wall is movable then the player pushes it along to the left
                     walls[i].position.x += (vro.position.x + vro.width) - walls[i].position.x + 10;
                 }else{
+                    //sets the players position to the edge of the object hit (left)
                     vro.position.x = walls[i].position.x - vro.width;
                     collision = true;
                 }
-                    //sets the players position to the edge of the object hit (left)
+                    
                     
                     
                 }else{
                     if(walls[i].moveable){
+                        //if the wall is movable then the player pushes it along to the right
                         walls[i].position.x -= (walls[i].position.x + walls[i].width) - vro.position.x + 10;
                         
                     }else{
+                        //sets the players position to the edge of the object hit (right) 
                         vro.position.x = walls[i].position.x + walls[i].width;
                         collision = true;
                     }
-                    //sets the players position to the edge of the object hit () right
+                    
                     
                 }
             }
@@ -237,6 +253,7 @@ void coll(float distance, char axis){
                     if (walls[i].moveable){
                         walls[i].position.y += (vro.position.y + vro.height) - walls[i].position.y + 10;
                         if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
+                        //sets the players position to the edge of the object hit (above)
                         vro.position.y = walls[i].position.y - vro.height;
                         collision = true;
                         }
@@ -244,7 +261,7 @@ void coll(float distance, char axis){
                         vro.position.y = walls[i].position.y - vro.height;
                         collision = true;
                     }
-                    //sets the players position to the edge of the object hit (above)
+                    
 
                 }else{
                     if (walls[i].moveable){

@@ -45,12 +45,14 @@ int main(void)
     
     
     
-    InitWindow(screenWidth, screenHeight, " |Pokemon Purple Version| "); //initilisation of the window 
+    InitWindow(screenWidth, screenHeight, " |ChronoQuest: Fractures In Time| "); //initilisation of the window 
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
-    Vector2 newTarget = {900, 450};
-    float zoomTarget = 0.5;
+    Texture2D buttonF = LoadTexture("Assests/UI/FButton.png");
+    
+    Vector2 newTarget = {800,450};
+    float zoomTarget = 1;
     //initializes camera values
     Camera2D camera = { 0 };
     camera.offset = {screenWidth/2.0f, screenHeight/2.0f };
@@ -64,21 +66,22 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
-      if(camera.target.x > 890){
-          newTarget = {700, 450};
-      }else if(camera.target.x < 710){
-          newTarget = {900, 450};
-      }
-      camera.target = {lerp(camera.target.x, newTarget.x, 0.03),450};
-      
-      if(camera.zoom < 0.75){
+      if(IsKeyPressed(KEY_UP)){
+          newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
+          zoomTarget = 1.2;
+      }else if(IsKeyPressed(KEY_DOWN)){
+          zoomTarget = 1.5;
+          newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2};
+      }else if(IsKeyPressed(KEY_LEFT)){
+          newTarget = {800,450};
           zoomTarget = 1;
-          
-      }else if(camera.zoom > 0.95){
-          zoomTarget = 0.7;
       }
+      camera.target = {lerp(camera.target.x, newTarget.x, 0.03), lerp(camera.target.y, newTarget.y, 0.03)};
       
-      camera.zoom = lerp(camera.zoom, zoomTarget, 0.01);
+      camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
+      
+      
+      
       
       
       
@@ -93,18 +96,23 @@ int main(void)
             //anything drawn inside of the BeginMode2D() and EndMode2D() are going to be drawn onto the world and wont move with the camera but anything drawn after EndMode2D() is drawn onto the screen and moves with the camera useful for UI
                 BeginMode2D(camera);
                 
+                
                   
                 ClearBackground(WHITE);
                 
                 
                 DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
                 DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, RED);
-
+                    
                 
                 EndMode2D();
                 //UI elements past this point
+                DrawRectangleRounded({475, 710, 1200, 200}, 4, 4, CLEARBASE(BLACK, 100));
                 
-                
+                DrawTextureEx(buttonF, {1300,650}, 0, 10, YELLOW);
+                DrawTextureEx(buttonF, {1025,650}, 0, 10, GREEN);
+                DrawTextureEx(buttonF, {750,650}, 0, 10, BLUE);
+                DrawTextureEx(buttonF, {475,650}, 0, 10, WHITE);
            
         //ends the drawing phase of the program     
         EndDrawing();
