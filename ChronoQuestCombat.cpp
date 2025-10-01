@@ -103,16 +103,17 @@ int main(void)
                 
                 DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
                 DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, RED);
+                
                     
                 
                 EndMode2D();
                 //UI elements past this point
-                DrawRectangleRounded({475, 710, 1200, 200}, 4, 4, CLEARBASE(BLACK, 100));
+                //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
                 
-                DrawTextureEx(buttonF, {1300,650}, 0, 10, YELLOW);
-                DrawTextureEx(buttonF, {1025,650}, 0, 10, GREEN);
-                DrawTextureEx(buttonF, {750,650}, 0, 10, BLUE);
-                DrawTextureEx(buttonF, {475,650}, 0, 10, WHITE);
+                //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
+                DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
+                DrawCircleSector({1300, 400}, 200, 0, 90, 20, BLACK);
+           
            
         //ends the drawing phase of the program     
         EndDrawing();
