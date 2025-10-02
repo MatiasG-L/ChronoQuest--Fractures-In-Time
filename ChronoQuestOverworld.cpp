@@ -82,29 +82,29 @@ int main(void)
         camera.target = lerpV(camera.target, {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2}, 0.2);
       
         if (IsKeyDown(KEY_W)){
-            vro.Velocity.y = -1;
+            vro.Velocity.y = 1;
           }
         
         if (IsKeyDown(KEY_A)){
-            vro.Velocity.x = -1;
+            vro.Velocity.x = 1;
           }
         if (IsKeyDown(KEY_S)){
-            vro.Velocity.y = 1;
+            vro.Velocity.y = -1;
           }
         if (IsKeyDown(KEY_D)){
-            vro.Velocity.x = 1;
-          }
-        if (IsKeyDown(KEY_LEFT)){
             vro.Velocity.x = -1;
           }
-        if (IsKeyDown(KEY_DOWN)){
-            vro.Velocity.y = 1;
-          }
-        if (IsKeyDown(KEY_RIGHT)){
+        if (IsKeyDown(KEY_LEFT)){
             vro.Velocity.x = 1;
           }
-        if (IsKeyDown(KEY_UP)){
+        if (IsKeyDown(KEY_DOWN)){
             vro.Velocity.y = -1;
+          }
+        if (IsKeyDown(KEY_RIGHT)){
+            vro.Velocity.x = -1;
+          }
+        if (IsKeyDown(KEY_UP)){
+            vro.Velocity.y = 1;
           }
      // code where wall collision is preformed agianst other walls (pushable walls)
     for (int i = 0; i < walls.size(); i++){
@@ -271,13 +271,6 @@ void coll(float distance){
     }
     //if no collisin was detected then the player is free to move the desired distance
     if (!collision){
-        if (vro.Velocity.x > 0 && vro.Velocity.y == 0){
-            vro.position.x += distance;
-        }else if (vro.Velocity.y > 0 && vro.Velocity.x == 0){
-            vro.position.y += distance;
-        }else if (vro.Velocity.x > 0 && vro.Velocity.y > 0){
-            vro.position.x += 7;
-            vro.position.y += 7;
-        }
+        vro.position = vectorAddition(vro.position,{vro.Velocity.x * distance, vro.Velocity.y * distance});
     }
 }
