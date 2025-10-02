@@ -60,6 +60,8 @@ int main(void)
     camera.zoom = 1.0f;
     camera.target = {800,450};
     
+    int UIWheel = 0;
+    
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
     
@@ -81,7 +83,33 @@ int main(void)
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
       
       
-      
+      if(IsKeyPressed(KEY_DOWN)){
+          if(UIWheel == 3){
+              UIWheel = 0;
+          }else{
+              UIWheel = 3;
+          }
+      }
+      if(IsKeyPressed(KEY_LEFT)){
+          if(UIWheel == 1){
+              UIWheel = 0;
+          }else{
+              UIWheel = 1;
+          }
+      }
+      if(IsKeyPressed(KEY_RIGHT)){
+          if(UIWheel == 4){
+              UIWheel = 0;
+          }else{
+              UIWheel = 4;
+          }
+      }if(IsKeyPressed(KEY_UP)){
+          if(UIWheel == 2){
+              UIWheel = 0;
+          }else{
+              UIWheel = 2;
+          }
+      }
       
       
       
@@ -102,7 +130,7 @@ int main(void)
                 
                 
                 DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
-                DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, RED);
+                DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
                 
                     
                 
@@ -112,8 +140,48 @@ int main(void)
                 
                 //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
                 DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
-                DrawCircleSector({1300, 400}, 200, 0, 90, 20, BLACK);
-           
+                Vector2 pos = {1300, 650};
+                
+                Vector2 pos1 = pos;
+                Vector2 pos2 = pos;
+                Vector2 pos3 = pos;
+                Vector2 pos4 = pos;
+                
+                switch(UIWheel){
+                    case 0:
+                        pos1 = pos;
+                        pos2 = pos;
+                        pos3 = pos;
+                        pos4 = pos;
+                        break;
+                    
+                    case 1:
+                        pos3.x -= 40;
+                        pos3.y -= 40;
+                        break;
+                        
+                    case 2:
+                        pos2.x += 40;
+                        pos2.y -= 40;
+                        break;
+                        
+                    case 3:
+                        pos4.x -= 40;
+                        pos4.y += 40;
+                        break;
+                        
+                    case 4:
+                        pos1.x += 40;
+                        pos1.y += 40;
+                        break;
+                        
+                    default:
+                        break;
+                }
+                DrawCircleSector(pos1, 200, 0, 90, 20, YELLOW);
+                DrawCircleSector(pos2, 200, 270, 360, 20, BLUE);
+                DrawCircleSector(pos3, 200, 180, 270, 20, RED);
+                DrawCircleSector(pos4, 200, 90, 180, 20, GREEN);
            
         //ends the drawing phase of the program     
         EndDrawing();
