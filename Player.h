@@ -62,5 +62,4 @@ class Player{
         this->suitStats = suitStats;
     }
     
-    Vector2 Velocity = {0,0};
 };

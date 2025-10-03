@@ -35,7 +35,7 @@ void coll(float distance);
 char plmove;
 int main(void)
 {
-    Wall one(100, 100, {200, 100}, BLUE);
+    Wall one(100, 100, {4500, 100}, BLUE);
     walls.push_back(one);
     Wall two(300, 100, {-300, 250}, BLUE);
     walls.push_back(two);
@@ -112,7 +112,7 @@ int main(void)
             //only checks collision if the wall at i is a movable wall and, its not the same as wall at j and, if wall at i is closer to the player than wall at j
             if (walls[i].moveable && j != i && abs(distance(walls[i].position, vro.position)) < abs(distance(walls[j].position, vro.position))){
                 //splits collision between the x and y axis respectivly 
-               if (plmove == 'x'){
+               if (vro.Velocity.x != 0){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
@@ -130,7 +130,7 @@ int main(void)
                        }
                    }
                 //splits collision between the x and y axis respectivly 
-               }else if (plmove == 'y'){
+               }else if (vro.Velocity.y != 0){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
@@ -196,7 +196,7 @@ void coll(float distance){
     //boolean to keep trabk of whether a collision was detected in th function
     bool collision = false;
     //collision on x axis
-    if (vro.Velocity.x > 0){
+    if (vro.Velocity.x != 0){
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < walls.size(); i++){
             //uses raylibs built in collision detection functino given two Rec objects as paramaters 
@@ -230,9 +230,10 @@ void coll(float distance){
                     
                 }
             }
+            
         }
      //collision on y axis
-    }else if (vro.Velocity.y > 0){
+    }else if (vro.Velocity.y != 0){
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < walls.size(); i++){
             //uses raylibs built in collision detection functino given two Rec objects as paramaters 
@@ -272,5 +273,6 @@ void coll(float distance){
     //if no collisin was detected then the player is free to move the desired distance
     if (!collision){
         vro.position = vectorAddition(vro.position,{vro.Velocity.x * distance, vro.Velocity.y * distance});
+        vro.Velocity = {0,0};
     }
 }
