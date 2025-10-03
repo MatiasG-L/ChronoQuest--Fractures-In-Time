@@ -61,4 +61,5 @@ class Player{
         this->suit = suit;
         this->suitStats = suitStats;
     }
+    
 };

@@ -31,11 +31,11 @@ Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10
 
 std::vector<Wall> walls;
 
-void coll(float distance, char axis);
+void coll(float distance);
 char plmove;
 int main(void)
 {
-    Wall one(100, 100, {200, 100}, BLUE);
+    Wall one(100, 100, {4500, 100}, BLUE);
     walls.push_back(one);
     Wall two(300, 100, {-300, 250}, BLUE);
     walls.push_back(two);
@@ -77,84 +77,34 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
-    
+    coll(-10);
         
         camera.target = lerpV(camera.target, {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2}, 0.2);
       
-        if (IsKeyDown(KEY_D) && IsKeyDown(KEY_W)){
-            coll(7, 'x');
-            coll(-7, 'y');
-            plmove = 'x';
-          }
-        else if (IsKeyDown(KEY_D) && IsKeyDown(KEY_S)){
-            coll(7, 'x');
-            coll(7, 'y');
-            plmove = 'x';
-          }
-        else if (IsKeyDown(KEY_A) && IsKeyDown(KEY_W)){
-            coll(-7, 'x');
-            coll(-7, 'y');
-            plmove = 'x';
-          }
-         else if (IsKeyDown(KEY_A) && IsKeyDown(KEY_S)){
-            coll(-7, 'x');
-            coll(7, 'y');
-            plmove = 'x';
-          }
-      
-      
-        else if (IsKeyDown(KEY_W)){
-            coll(-10, 'y');
-            plmove = 'y';
+        if (IsKeyDown(KEY_W)){
+            vro.Velocity.y = 1;
           }
         
-        else if (IsKeyDown(KEY_A)){
-            coll(-10, 'x');
-            plmove = 'x';
+        if (IsKeyDown(KEY_A)){
+            vro.Velocity.x = 1;
           }
-        else if (IsKeyDown(KEY_S)){
-            coll(10, 'y');
-            plmove = 'y';
+        if (IsKeyDown(KEY_S)){
+            vro.Velocity.y = -1;
           }
-        else if (IsKeyDown(KEY_D)){
-            coll(10, 'x');
-            plmove = 'x';
+        if (IsKeyDown(KEY_D)){
+            vro.Velocity.x = -1;
           }
-        else if (IsKeyDown(KEY_UP)){
-            coll(-10, 'y');
-            plmove = 'y';
+        if (IsKeyDown(KEY_LEFT)){
+            vro.Velocity.x = 1;
           }
-         else if (IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_UP)){
-            coll(7, 'x');
-            coll(-7, 'y');
-            plmove = 'x';
+        if (IsKeyDown(KEY_DOWN)){
+            vro.Velocity.y = -1;
           }
-        else if (IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_DOWN)){
-            coll(7, 'x');
-            coll(7, 'y');
-            plmove = 'x';
+        if (IsKeyDown(KEY_RIGHT)){
+            vro.Velocity.x = -1;
           }
-        else if (IsKeyDown(KEY_LEFT) && IsKeyDown(KEY_UP)){
-            coll(-7, 'x');
-            coll(-7, 'y');
-            plmove = 'x';
-          }
-         else if (IsKeyDown(KEY_LEFT) && IsKeyDown(KEY_DOWN)){
-            coll(-7, 'x');
-            coll(7, 'y');
-            plmove = 'x';
-          }
-        else if (IsKeyDown(KEY_LEFT)){
-            coll(-10, 'x');
-            plmove = 'x';
-          }
-        else if (IsKeyDown(KEY_DOWN)){
-            coll(10, 'y');
-            plmove = 'y';
-          }
-        else if (IsKeyDown(KEY_RIGHT)){
-            coll(10, 'x');
-            plmove = 'x';
+        if (IsKeyDown(KEY_UP)){
+            vro.Velocity.y = 1;
           }
      // code where wall collision is preformed agianst other walls (pushable walls)
     for (int i = 0; i < walls.size(); i++){
@@ -162,7 +112,7 @@ int main(void)
             //only checks collision if the wall at i is a movable wall and, its not the same as wall at j and, if wall at i is closer to the player than wall at j
             if (walls[i].moveable && j != i && abs(distance(walls[i].position, vro.position)) < abs(distance(walls[j].position, vro.position))){
                 //splits collision between the x and y axis respectivly 
-               if (plmove == 'x'){
+               if (vro.Velocity.x != 0){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
@@ -180,7 +130,7 @@ int main(void)
                        }
                    }
                 //splits collision between the x and y axis respectivly 
-               }else if (plmove == 'y'){
+               }else if (vro.Velocity.y != 0){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({walls[i].position.x, walls[i].position.y, walls[i].width, walls[i].height},{walls[j].position.x, walls[j].position.y, walls[j].width, walls[j].height})){
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
@@ -241,12 +191,12 @@ int main(void)
     return 0;
 }
 //function for collision handleling that takes paramaters for the distance desired to move and the axis on which to move
-void coll(float distance, char axis){
+void coll(float distance){
     
     //boolean to keep trabk of whether a collision was detected in th function
     bool collision = false;
     //collision on x axis
-    if (axis == 'x'){
+    if (vro.Velocity.x != 0){
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < walls.size(); i++){
             //uses raylibs built in collision detection functino given two Rec objects as paramaters 
@@ -280,9 +230,10 @@ void coll(float distance, char axis){
                     
                 }
             }
+            
         }
      //collision on y axis
-    }else if (axis == 'y'){
+    }else if (vro.Velocity.y != 0){
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < walls.size(); i++){
             //uses raylibs built in collision detection functino given two Rec objects as paramaters 
@@ -315,15 +266,13 @@ void coll(float distance, char axis){
                 }
             }   
         }
+        
     
     
     }
     //if no collisin was detected then the player is free to move the desired distance
     if (!collision){
-        if (axis == 'x'){
-        vro.position.x += distance;
-        }else if (axis == 'y'){
-            vro.position.y += distance;
-        }
+        vro.position = vectorAddition(vro.position,{vro.Velocity.x * distance, vro.Velocity.y * distance});
+        vro.Velocity = {0,0};
     }
 }
