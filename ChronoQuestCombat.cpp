@@ -60,6 +60,11 @@ int main(void)
     camera.zoom = 1.0f;
     camera.target = {800,450};
     
+    Vector2 pos01 = {1300, 650};
+    Vector2 pos02 = {1300, 650};
+    Vector2 pos03 = {1300, 650};
+    Vector2 pos04 = {1300, 650};
+    
     int UIWheel = 0;
     
     SetTargetFPS(60);
@@ -83,27 +88,27 @@ int main(void)
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
       
       
-      if(IsKeyPressed(KEY_DOWN)){
+      if(IsKeyPressed(KEY_ONE)){
           if(UIWheel == 3){
               UIWheel = 0;
           }else{
               UIWheel = 3;
           }
       }
-      if(IsKeyPressed(KEY_LEFT)){
+      if(IsKeyPressed(KEY_TWO)){
           if(UIWheel == 1){
               UIWheel = 0;
           }else{
               UIWheel = 1;
           }
       }
-      if(IsKeyPressed(KEY_RIGHT)){
+      if(IsKeyPressed(KEY_THREE)){
           if(UIWheel == 4){
               UIWheel = 0;
           }else{
               UIWheel = 4;
           }
-      }if(IsKeyPressed(KEY_UP)){
+      }if(IsKeyPressed(KEY_FOUR)){
           if(UIWheel == 2){
               UIWheel = 0;
           }else{
@@ -132,6 +137,7 @@ int main(void)
                 DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
                 DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
                 
+                
                     
                 
                 EndMode2D();
@@ -142,10 +148,14 @@ int main(void)
                 DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
                 Vector2 pos = {1300, 650};
                 
+                
+                
                 Vector2 pos1 = pos;
                 Vector2 pos2 = pos;
                 Vector2 pos3 = pos;
                 Vector2 pos4 = pos;
+                
+                
                 
                 switch(UIWheel){
                     case 0:
@@ -178,10 +188,16 @@ int main(void)
                     default:
                         break;
                 }
-                DrawCircleSector(pos1, 200, 0, 90, 20, YELLOW);
-                DrawCircleSector(pos2, 200, 270, 360, 20, BLUE);
-                DrawCircleSector(pos3, 200, 180, 270, 20, RED);
-                DrawCircleSector(pos4, 200, 90, 180, 20, GREEN);
+                
+                pos01 = lerpV(pos01, pos1 , 0.3);
+                pos02 = lerpV(pos02, pos2, 0.3);
+                pos03 = lerpV(pos03, pos3, 0.3);
+                pos04 = lerpV(pos04, pos4, 0.3);
+                //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
+                DrawCircleSectorLines(pos01, 200, 0, 90, 50, YELLOW);
+                DrawCircleSectorLines(pos02, 200, 270, 360, 50, BLUE);
+                DrawCircleSectorLines(pos03, 200, 180, 270, 50, RED);
+                DrawCircleSectorLines(pos04, 200, 90, 180, 50, GREEN);
            
         //ends the drawing phase of the program     
         EndDrawing();
