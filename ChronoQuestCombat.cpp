@@ -28,7 +28,7 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 //(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
-Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10}, {10, 10, 10});
+Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
 //(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats)
 Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, {10,10,10,10,10});
 
@@ -64,7 +64,8 @@ int main(void)
     Vector2 pos02 = {1300, 650};
     Vector2 pos03 = {1300, 650};
     Vector2 pos04 = {1300, 650};
-    
+    float HealthWidth = 0;
+    float EnergyWidth = 0;
     int UIWheel = 0;
     
     SetTargetFPS(60);
@@ -73,19 +74,27 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
-      if(IsKeyPressed(KEY_UP)){
+      if(IsKeyPressed(KEY_LEFT)){
           newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
           zoomTarget = 1.2;
-      }else if(IsKeyPressed(KEY_DOWN)){
+      }else if(IsKeyPressed(KEY_RIGHT)){
           zoomTarget = 1.5;
           newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2};
-      }else if(IsKeyPressed(KEY_LEFT)){
+      }else if(IsKeyPressed(KEY_UP)){
           newTarget = {800,450};
           zoomTarget = 1;
       }
       camera.target = {lerp(camera.target.x, newTarget.x, 0.03), lerp(camera.target.y, newTarget.y, 0.03)};
       
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
+      
+      
+      if(IsKeyPressed(KEY_BACKSPACE)){
+         player.health -= 10;
+      }
+      if(IsKeyPressed(KEY_L)){
+         player.health += 10;
+      }
       
       
       if(IsKeyPressed(KEY_ONE)){
@@ -138,11 +147,21 @@ int main(void)
                 DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
                 
                 
-                    
+                 
                 
                 EndMode2D();
                 //UI elements past this point
                 //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
+                //DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);
+                HealthWidth = lerp(HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);   
+                DrawRectangleRounded({50, 50, 1000, 50}, 20, 20, GRAY);
+                DrawRectangleRoundedLines({50, 50, 1000, 50}, 20, 20, 2, BLACK);
+                DrawRectangleRounded({50, 50, HealthWidth, 50}, 20, 20, GREEN);
+                
+                EnergyWidth = lerp(EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
+                DrawRectangleRounded({50, 120, 1000, 50}, 20, 20, GRAY);
+                DrawRectangleRoundedLines({50, 120, 1000, 50}, 20, 20, 2, BLACK);
+                DrawRectangleRounded({50, 120, EnergyWidth, 50}, 20, 20, BLUE);
                 
                 //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
                 DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));

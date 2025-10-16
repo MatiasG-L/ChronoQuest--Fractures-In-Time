@@ -8,12 +8,12 @@ class Player{
     int height = 100;
     Vector2 position;
     std::string name;
-    float health;
-    float maxHealth;
+    float health = 100;
+    float maxHealth = 100;
     int rank;
     int exp;
-    int artificialAnomaly;
     int expRankUp;
+    Vector2 Velocity = {0,0};
     typedef struct{
         int physicalAtk;
         int specialAtk;
@@ -38,19 +38,11 @@ class Player{
     
     Suit suit;
     
-    typedef struct{
-        int Attack;
-        int Defence;
-        int Speed;
-    }SuitStats;
-    
-    SuitStats suitStats;
-    
     int weight;
 
     
     
-    Player(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats){
+    Player(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit){
         this->width = width;
         this->height = height;
         this->position = position;
@@ -59,7 +51,6 @@ class Player{
         this->expRankUp = expRankUp;
         this->stats = stats;
         this->suit = suit;
-        this->suitStats = suitStats;
     }
     
 };
