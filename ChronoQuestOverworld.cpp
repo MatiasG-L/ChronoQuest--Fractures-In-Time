@@ -27,7 +27,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10}});
+Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
 
 std::vector<Wall> walls;
 
@@ -208,6 +208,7 @@ void coll(float distance){
                     if(walls[i].moveable){
                     //if the wall is movable then the player pushes it along to the left
                     walls[i].position.x += (vro.position.x + vro.width) - walls[i].position.x + 10;
+                    vro.Velocity.x == 0;
                 }else{
                     //sets the players position to the edge of the object hit (left)
                     vro.position.x = walls[i].position.x - vro.width;
@@ -220,7 +221,7 @@ void coll(float distance){
                     if(walls[i].moveable){
                         //if the wall is movable then the player pushes it along to the right
                         walls[i].position.x -= (walls[i].position.x + walls[i].width) - vro.position.x + 10;
-                        
+                        vro.Velocity.x == 0;
                     }else{
                         //sets the players position to the edge of the object hit (right) 
                         vro.position.x = walls[i].position.x + walls[i].width;
@@ -243,6 +244,7 @@ void coll(float distance){
                     //checks if the wall is moveable and pushes it
                     if (walls[i].moveable){
                         walls[i].position.y += (vro.position.y + vro.height) - walls[i].position.y + 10;
+                        vro.Velocity.y == 0;
                         if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {walls[i].position.x, walls[i].position.y,walls[i].width,walls[i].height})){
                         //sets the players position to the edge of the object hit (above)
                         vro.position.y = walls[i].position.y - vro.height;
@@ -257,7 +259,7 @@ void coll(float distance){
                 }else{
                     if (walls[i].moveable){
                         walls[i].position.y -= (walls[i].position.y + walls[i].height) - vro.position.y + 10;
-                        
+                        vro.Velocity.y == 0;
                     }else{
                         vro.position.y = walls[i].position.y + walls[i].height;
                         collision = true;
