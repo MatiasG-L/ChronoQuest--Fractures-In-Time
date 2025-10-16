@@ -28,7 +28,7 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 //(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
-Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10}, {10, 10, 10});
+Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
 //(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats)
 Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, {10,10,10,10,10});
 
@@ -60,19 +60,27 @@ int main(void)
     camera.zoom = 1.0f;
     camera.target = {800,450};
     
+    Vector2 pos01 = {1300, 650};
+    Vector2 pos02 = {1300, 650};
+    Vector2 pos03 = {1300, 650};
+    Vector2 pos04 = {1300, 650};
+    float HealthWidth = 0;
+    float EnergyWidth = 0;
+    int UIWheel = 0;
+    
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
     
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
-      if(IsKeyPressed(KEY_UP)){
+      if(IsKeyPressed(KEY_LEFT)){
           newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
           zoomTarget = 1.2;
-      }else if(IsKeyPressed(KEY_DOWN)){
+      }else if(IsKeyPressed(KEY_RIGHT)){
           zoomTarget = 1.5;
           newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2};
-      }else if(IsKeyPressed(KEY_LEFT)){
+      }else if(IsKeyPressed(KEY_UP)){
           newTarget = {800,450};
           zoomTarget = 1;
       }
@@ -81,7 +89,41 @@ int main(void)
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
       
       
+      if(IsKeyPressed(KEY_BACKSPACE)){
+         player.health -= 10;
+      }
+      if(IsKeyPressed(KEY_L)){
+         player.health += 10;
+      }
       
+      
+      if(IsKeyPressed(KEY_ONE)){
+          if(UIWheel == 3){
+              UIWheel = 0;
+          }else{
+              UIWheel = 3;
+          }
+      }
+      if(IsKeyPressed(KEY_TWO)){
+          if(UIWheel == 1){
+              UIWheel = 0;
+          }else{
+              UIWheel = 1;
+          }
+      }
+      if(IsKeyPressed(KEY_THREE)){
+          if(UIWheel == 4){
+              UIWheel = 0;
+          }else{
+              UIWheel = 4;
+          }
+      }if(IsKeyPressed(KEY_FOUR)){
+          if(UIWheel == 2){
+              UIWheel = 0;
+          }else{
+              UIWheel = 2;
+          }
+      }
       
       
       
@@ -102,17 +144,79 @@ int main(void)
                 
                 
                 DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
-                DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, RED);
-                    
+                DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
+                
+                
+                 
                 
                 EndMode2D();
                 //UI elements past this point
-                DrawRectangleRounded({475, 710, 1200, 200}, 4, 4, CLEARBASE(BLACK, 100));
+                //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
+                //DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);
+                HealthWidth = lerp(HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);   
+                DrawRectangleRounded({50, 50, 1000, 50}, 20, 20, GRAY);
+                DrawRectangleRoundedLines({50, 50, 1000, 50}, 20, 20, 2, BLACK);
+                DrawRectangleRounded({50, 50, HealthWidth, 50}, 20, 20, GREEN);
                 
-                DrawTextureEx(buttonF, {1300,650}, 0, 10, YELLOW);
-                DrawTextureEx(buttonF, {1025,650}, 0, 10, GREEN);
-                DrawTextureEx(buttonF, {750,650}, 0, 10, BLUE);
-                DrawTextureEx(buttonF, {475,650}, 0, 10, WHITE);
+                EnergyWidth = lerp(EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
+                DrawRectangleRounded({50, 120, 1000, 50}, 20, 20, GRAY);
+                DrawRectangleRoundedLines({50, 120, 1000, 50}, 20, 20, 2, BLACK);
+                DrawRectangleRounded({50, 120, EnergyWidth, 50}, 20, 20, BLUE);
+                
+                //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
+                DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
+                Vector2 pos = {1300, 650};
+                
+                
+                
+                Vector2 pos1 = pos;
+                Vector2 pos2 = pos;
+                Vector2 pos3 = pos;
+                Vector2 pos4 = pos;
+                
+                
+                
+                switch(UIWheel){
+                    case 0:
+                        pos1 = pos;
+                        pos2 = pos;
+                        pos3 = pos;
+                        pos4 = pos;
+                        break;
+                    
+                    case 1:
+                        pos3.x -= 40;
+                        pos3.y -= 40;
+                        break;
+                        
+                    case 2:
+                        pos2.x += 40;
+                        pos2.y -= 40;
+                        break;
+                        
+                    case 3:
+                        pos4.x -= 40;
+                        pos4.y += 40;
+                        break;
+                        
+                    case 4:
+                        pos1.x += 40;
+                        pos1.y += 40;
+                        break;
+                        
+                    default:
+                        break;
+                }
+                
+                pos01 = lerpV(pos01, pos1 , 0.3);
+                pos02 = lerpV(pos02, pos2, 0.3);
+                pos03 = lerpV(pos03, pos3, 0.3);
+                pos04 = lerpV(pos04, pos4, 0.3);
+                //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
+                DrawCircleSectorLines(pos01, 200, 0, 90, 50, YELLOW);
+                DrawCircleSectorLines(pos02, 200, 270, 360, 50, BLUE);
+                DrawCircleSectorLines(pos03, 200, 180, 270, 50, RED);
+                DrawCircleSectorLines(pos04, 200, 90, 180, 50, GREEN);
            
         //ends the drawing phase of the program     
         EndDrawing();
