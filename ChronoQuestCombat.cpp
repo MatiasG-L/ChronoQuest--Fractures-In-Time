@@ -89,10 +89,10 @@ int main(void)
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
       
       
-      if(IsKeyPressed(KEY_BACKSPACE)){
+      if(IsKeyDown(KEY_BACKSPACE)){
          player.health -= 10;
       }
-      if(IsKeyPressed(KEY_L)){
+      if(IsKeyDown(KEY_L)){
          player.health += 10;
       }
       
@@ -153,18 +153,29 @@ int main(void)
                 //UI elements past this point
                 //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
                 //DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);
-                HealthWidth = lerp(HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);   
-                DrawRectangleRounded({50, 50, 1000, 50}, 20, 20, GRAY);
-                DrawRectangleRoundedLines({50, 50, 1000, 50}, 20, 20, 2, BLACK);
-                DrawRectangleRounded({50, 50, HealthWidth, 50}, 20, 20, GREEN);
+                
+                DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
+                
+                
+                //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
+                HealthWidth = lerp(HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);  
+                //Draws the outline for the bar to make it look a little better
+                DrawRectangleRoundedLines({50, 50, 1000, 25}, 20, 20, 10, BLUE);
+                //Draws the gray background for the bar when it gets depleted 
+                DrawRectangleRounded({50, 50, 1000, 25}, 20, 20, GRAY);
+                
+                
+                //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
+                DrawRectangleRounded({50, 50, HealthWidth, 25}, 20, 20, GREEN);
+                
                 
                 EnergyWidth = lerp(EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
-                DrawRectangleRounded({50, 120, 1000, 50}, 20, 20, GRAY);
-                DrawRectangleRoundedLines({50, 120, 1000, 50}, 20, 20, 2, BLACK);
-                DrawRectangleRounded({50, 120, EnergyWidth, 50}, 20, 20, BLUE);
+                DrawRectangleRounded({50, 120, 1000, 25}, 20, 20, GRAY);
+                DrawRectangleRounded({50, 120, EnergyWidth, 25}, 20, 20, BLUE);
+                DrawRectangleRoundedLines({50, 120, 1000, 25}, 20, 20, 2, BLACK);
                 
                 //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
-                DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
+                
                 Vector2 pos = {1300, 650};
                 
                 
@@ -175,7 +186,8 @@ int main(void)
                 Vector2 pos4 = pos;
                 
                 
-                
+        
+        
                 switch(UIWheel){
                     case 0:
                         pos1 = pos;
