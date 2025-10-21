@@ -11,6 +11,8 @@ class Player{
     float health = 100;
     float maxHealth = 100;
     int rank;
+    float stamina = 100;
+    float maxStamina = 100;
     int exp;
     int expRankUp;
     Vector2 Velocity = {0,0};

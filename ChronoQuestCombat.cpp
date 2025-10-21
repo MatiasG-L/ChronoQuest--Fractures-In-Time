@@ -32,6 +32,8 @@ Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10
 //(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats)
 Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, {10,10,10,10,10});
 
+
+
 int main(void)
 {
    
@@ -49,7 +51,11 @@ int main(void)
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
+    
+    
     Texture2D buttonF = LoadTexture("Assests/UI/FButton.png");
+    Texture2D PlayerSprite = LoadTexture("Assests/Player/pixilart-sprite.png");
+    Texture2D EnemySprite = LoadTexture("Assests/Enemy/enemy0.png");
     
     Vector2 newTarget = {800,450};
     float zoomTarget = 1;
@@ -66,6 +72,7 @@ int main(void)
     Vector2 pos04 = {1300, 650};
     float HealthWidth = 0;
     float EnergyWidth = 0;
+    float StaminaWidth = 0;
     int UIWheel = 0;
     
     SetTargetFPS(60);
@@ -94,6 +101,19 @@ int main(void)
       }
       if(IsKeyDown(KEY_L)){
          player.health += 10;
+      }
+      
+      if(IsKeyDown(KEY_T)){
+         player.suit.battery -= 10;
+      }
+      if(IsKeyDown(KEY_Y)){
+         player.suit.battery += 10;
+      }
+      if(IsKeyDown(KEY_G)){
+         player.stamina -= 10;
+      }
+      if(IsKeyDown(KEY_H)){
+         player.stamina += 10;
       }
       
       
@@ -143,8 +163,10 @@ int main(void)
                 ClearBackground(WHITE);
                 
                 
-                DrawRectangle(player.position.x, player.position.y, player.width, player.height, BLACK);
-                DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
+                //DrawRectangleLines(player.position.x, player.position.y, player.width, player.height, BLACK);
+                DrawTextureEx(PlayerSprite, player.position, 0, 6, WHITE);
+                //DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
+                DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -150}), 0, 5, WHITE);
                 
                 
                  
@@ -154,7 +176,7 @@ int main(void)
                 //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
                 //DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);
                 
-                DrawRectangle(-100, 0, 1200, 300, CLEARBASE(BLACK, 100));
+                DrawRectangle(-100, 0, 1200, 225, CLEARBASE(BLACK, 100));
                 
                 
                 //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
@@ -170,9 +192,14 @@ int main(void)
                 
                 
                 EnergyWidth = lerp(EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
-                DrawRectangleRounded({50, 120, 1000, 25}, 20, 20, GRAY);
-                DrawRectangleRounded({50, 120, EnergyWidth, 25}, 20, 20, BLUE);
-                DrawRectangleRoundedLines({50, 120, 1000, 25}, 20, 20, 2, BLACK);
+                DrawRectangleRounded({50, 100, 1000, 25}, 20, 20, GRAY);
+                DrawRectangleRounded({50, 100, EnergyWidth, 25}, 20, 20, BLUE);
+                DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 2, BLACK);
+                
+                StaminaWidth = lerp(StaminaWidth, lerp(0, 1000, player.stamina/player.maxStamina), 0.05);   
+                DrawRectangleRounded({50, 150, 1000, 25}, 20, 20, GRAY);
+                DrawRectangleRounded({50, 150, StaminaWidth, 25}, 20, 20, YELLOW);
+                DrawRectangleRoundedLines({50, 150, 1000, 25}, 20, 20, 2, BLACK);
                 
                 //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
                 
