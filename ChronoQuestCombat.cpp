@@ -66,14 +66,27 @@ int main(void)
     camera.zoom = 1.0f;
     camera.target = {800,450};
     
-    Vector2 pos01 = {1300, 650};
-    Vector2 pos02 = {1300, 650};
-    Vector2 pos03 = {1300, 650};
-    Vector2 pos04 = {1300, 650};
-    float HealthWidth = 0;
-    float EnergyWidth = 0;
-    float StaminaWidth = 0;
-    int UIWheel = 0;
+    
+    typedef struct{
+        Vector2 pos01 = {1300, 650};
+        Vector2 pos02 = {1300, 650};
+        Vector2 pos03 = {1300, 650};
+        Vector2 pos04 = {1300, 650};
+        
+        int rad1 = 200;
+        int rad2 = 200;
+        int rad3 = 200;
+        int rad4 = 200;
+        
+        float HealthWidth = 0;
+        float EnergyWidth = 0;
+        float StaminaWidth = 0;
+        int UIWheel = 0;
+    }UI;
+    
+    UI ui;
+   
+    
     
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -118,30 +131,30 @@ int main(void)
       
       
       if(IsKeyPressed(KEY_ONE)){
-          if(UIWheel == 3){
-              UIWheel = 0;
+          if(ui.UIWheel == 3){
+              ui.UIWheel = 0;
           }else{
-              UIWheel = 3;
+              ui.UIWheel = 3;
           }
       }
       if(IsKeyPressed(KEY_TWO)){
-          if(UIWheel == 1){
-              UIWheel = 0;
+          if(ui.UIWheel == 1){
+              ui.UIWheel = 0;
           }else{
-              UIWheel = 1;
+              ui.UIWheel = 1;
           }
       }
       if(IsKeyPressed(KEY_THREE)){
-          if(UIWheel == 4){
-              UIWheel = 0;
+          if(ui.UIWheel == 4){
+              ui.UIWheel = 0;
           }else{
-              UIWheel = 4;
+              ui.UIWheel = 4;
           }
       }if(IsKeyPressed(KEY_FOUR)){
-          if(UIWheel == 2){
-              UIWheel = 0;
+          if(ui.UIWheel == 2){
+             ui.UIWheel = 0;
           }else{
-              UIWheel = 2;
+              ui.UIWheel = 2;
           }
       }
       
@@ -158,8 +171,6 @@ int main(void)
             //anything drawn inside of the BeginMode2D() and EndMode2D() are going to be drawn onto the world and wont move with the camera but anything drawn after EndMode2D() is drawn onto the screen and moves with the camera useful for UI
                 BeginMode2D(camera);
                 
-                
-                  
                 ClearBackground(WHITE);
                 
                 
@@ -180,7 +191,7 @@ int main(void)
                 
                 
                 //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
-                HealthWidth = lerp(HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);  
+                ui.HealthWidth = lerp(ui.HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);  
                 //Draws the outline for the bar to make it look a little better
                 DrawRectangleRoundedLines({50, 50, 1000, 25}, 20, 20, 10, BLUE);
                 //Draws the gray background for the bar when it gets depleted 
@@ -188,17 +199,17 @@ int main(void)
                 
                 
                 //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
-                DrawRectangleRounded({50, 50, HealthWidth, 25}, 20, 20, GREEN);
+                DrawRectangleRounded({50, 50, ui.HealthWidth, 25}, 20, 20, GREEN);
                 
                 
-                EnergyWidth = lerp(EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
+                ui.EnergyWidth = lerp(ui.EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
                 DrawRectangleRounded({50, 100, 1000, 25}, 20, 20, GRAY);
-                DrawRectangleRounded({50, 100, EnergyWidth, 25}, 20, 20, BLUE);
+                DrawRectangleRounded({50, 100, ui.EnergyWidth, 25}, 20, 20, BLUE);
                 DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 2, BLACK);
                 
-                StaminaWidth = lerp(StaminaWidth, lerp(0, 1000, player.stamina/player.maxStamina), 0.05);   
+                ui.StaminaWidth = lerp(ui.StaminaWidth, lerp(0, 1000, player.stamina/player.maxStamina), 0.05);   
                 DrawRectangleRounded({50, 150, 1000, 25}, 20, 20, GRAY);
-                DrawRectangleRounded({50, 150, StaminaWidth, 25}, 20, 20, YELLOW);
+                DrawRectangleRounded({50, 150, ui.StaminaWidth, 25}, 20, 20, YELLOW);
                 DrawRectangleRoundedLines({50, 150, 1000, 25}, 20, 20, 2, BLACK);
                 
                 //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
@@ -215,47 +226,55 @@ int main(void)
                 
         
         
-                switch(UIWheel){
+                switch(ui.UIWheel){
                     case 0:
                         pos1 = pos;
                         pos2 = pos;
                         pos3 = pos;
                         pos4 = pos;
+                        ui.rad1 = 200;
+                        ui.rad2 = 200;
+                        ui.rad3 = 200;
+                        ui.rad4 = 200;
                         break;
                     
                     case 1:
                         pos3.x -= 40;
                         pos3.y -= 40;
+                        ui.rad3 = 250;
                         break;
                         
                     case 2:
                         pos2.x += 40;
                         pos2.y -= 40;
+                        ui.rad2 = 250;
                         break;
                         
                     case 3:
                         pos4.x -= 40;
                         pos4.y += 40;
+                        ui.rad4 = 250;
                         break;
                         
                     case 4:
                         pos1.x += 40;
                         pos1.y += 40;
+                        ui.rad1 = 250;
                         break;
                         
                     default:
                         break;
                 }
                 
-                pos01 = lerpV(pos01, pos1 , 0.3);
-                pos02 = lerpV(pos02, pos2, 0.3);
-                pos03 = lerpV(pos03, pos3, 0.3);
-                pos04 = lerpV(pos04, pos4, 0.3);
+                ui.pos01 = lerpV(ui.pos01, pos1 , 0.3);
+                ui.pos02 = lerpV(ui.pos02, pos2, 0.3);
+                ui.pos03 = lerpV(ui.pos03, pos3, 0.3);
+                ui.pos04 = lerpV(ui.pos04, pos4, 0.3);
                 //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
-                DrawCircleSectorLines(pos01, 200, 0, 90, 50, YELLOW);
-                DrawCircleSectorLines(pos02, 200, 270, 360, 50, BLUE);
-                DrawCircleSectorLines(pos03, 200, 180, 270, 50, RED);
-                DrawCircleSectorLines(pos04, 200, 90, 180, 50, GREEN);
+                DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
            
         //ends the drawing phase of the program     
         EndDrawing();
