@@ -23,12 +23,12 @@
 #include "Wall.h"
 #include "raylib.h"
 #include "Player.h"
-
+#include "NPC.h"
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
 Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
-
+Npc A(100, 100, {0,0}, "NPC A", "Ultron my goat", '1');
 std::vector<Wall> walls;
 
 void coll(float distance, char axis);
@@ -173,10 +173,11 @@ int main(void)
                 ClearBackground(WHITE);
                 //draws the player
                 DrawRectangle(vro.position.x,vro.position.y,vro.width,vro.height,ORANGE);
+                
                 for(int i = 0; i < walls.size(); i++){
                     DrawRectangle(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,walls[i].squr);
                 }
-                
+                DrawRectangle(A.position.x,A.position.y,A.width,A.height,RED);
 
                 
                 EndMode2D();
