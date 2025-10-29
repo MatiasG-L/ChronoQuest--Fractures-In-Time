@@ -53,7 +53,10 @@ int main(void)
     
     
     
-    Texture2D buttonF = LoadTexture("Assests/UI/FButton.png");
+    Texture2D IconA = LoadTexture("Assests/UI/Attack Icon.png");
+    Texture2D IconB = LoadTexture("Assests/UI/Block Icon.png");
+    Texture2D IconI = LoadTexture("Assests/UI/Items Icon.png");
+    Texture2D IconR = LoadTexture("Assests/UI/Running Icon.png");
     Texture2D PlayerSprite = LoadTexture("Assests/Player/pixilart-sprite.png");
     Texture2D EnemySprite = LoadTexture("Assests/Enemy/enemy0.png");
     
@@ -242,24 +245,36 @@ int main(void)
                         pos3.x -= 40;
                         pos3.y -= 40;
                         ui.rad3 = 250;
+                        ui.rad4 = 200;
+                        ui.rad1 = 200;
+                        ui.rad2 = 200;
                         break;
                         
                     case 2:
                         pos2.x += 40;
                         pos2.y -= 40;
                         ui.rad2 = 250;
+                        ui.rad3 = 200;
+                        ui.rad4 = 200;
+                        ui.rad1 = 200;
                         break;
                         
                     case 3:
                         pos4.x -= 40;
                         pos4.y += 40;
                         ui.rad4 = 250;
+                        ui.rad1 = 200;
+                        ui.rad2 = 200;
+                        ui.rad3 = 200;
                         break;
                         
                     case 4:
                         pos1.x += 40;
                         pos1.y += 40;
                         ui.rad1 = 250;
+                        ui.rad2 = 200;
+                        ui.rad3 = 200;
+                        ui.rad4 = 200;
                         break;
                         
                     default:
@@ -272,9 +287,13 @@ int main(void)
                 ui.pos04 = lerpV(ui.pos04, pos4, 0.3);
                 //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
                 DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
                 DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
                 DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
                 DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
            
         //ends the drawing phase of the program     
         EndDrawing();

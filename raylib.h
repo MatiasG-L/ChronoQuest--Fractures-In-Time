@@ -230,6 +230,7 @@ Vector2 lerpV(Vector2 start, Vector2 end, float t){ return {lerp(start.x, end.x,
 //return the sum of each axis as a Vector2
 Vector2 vectorAddition(Vector2 a, Vector2 b){return{a.x + b.x, a.y + b.y};}
 Vector2 vectorAddition(Vector2 a, float b){return{a.x + b, a.y + b};}
+Vector2 vectorAddition(Vector2 a, float x, float y){return{a.x + x, a.y + y};}
 //return the difference of each axis as a Vector2
 Vector2 vectorSubtraction(Vector2 *a, Vector2 *b){return{a->x - b->x, a->y - b->y};}
 //finds the middle point of two vectors returned as a vetor2
