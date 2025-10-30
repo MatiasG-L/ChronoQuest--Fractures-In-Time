@@ -235,7 +235,7 @@ Vector2 vectorSubtraction(Vector2 *a, Vector2 *b){return{a->x - b->x, a->y - b->
 //finds the middle point of two vectors returned as a vetor2
 Vector2 midWayPoint(Vector2 start, Vector2 end){return{(start.x+end.x)/2 ,(start.y+end.y)/2};}
 //returns the distance between two points(vector2) as a float
-float distance(Vector2 start, Vector2 end){
+float Distance(Vector2 start, Vector2 end){
     return sqrt(pow(end.x-start.x,2)+pow(end.y-start.y,2));
 }
 

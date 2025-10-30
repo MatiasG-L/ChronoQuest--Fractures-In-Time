@@ -6,18 +6,18 @@ class Wall{
     int width;
     Vector2 position;
     bool moveable = false;
-    Color squr;
-    Wall(int height, int width, Vector2 position, Color squr){
+    Color sqrColor;
+    Wall(int height, int width, Vector2 position, Color sqrColor){
         this->height = height;
         this->width = width;
-        this->squr = squr;
+        this->sqrColor = sqrColor;
         this->position = position;
     }
-    Wall(int height, int width, Vector2 position, bool moveable, Color squr){
+    Wall(int height, int width, Vector2 position, bool moveable, Color sqrColor){
         this->height = height;
         this->width = width;
         this->moveable = moveable;
-        this->squr = squr;
+        this->sqrColor = sqrColor;
         this->position = position;
     }
 };
