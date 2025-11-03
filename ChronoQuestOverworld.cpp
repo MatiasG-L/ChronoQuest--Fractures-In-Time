@@ -167,19 +167,19 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < toCheck->size(); i++){
             //uses raylibs built in collision detection functino given two Rec objects as paramaters 
-            if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {*toCheck[i].position.x, *toCheck[i].position.y, *toCheck[i].width, *toCheck[i].height})){
+            if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height})){
                 
                 
                 //determines if the players starting position is on the left of the objected collided with
-                if(vro.position.x < toCheck[i]->position.x + toCheck[i]->width / 2){
-                    if(toCheck[i]->moveable){
+                if(vro.position.x < toCheck->at(i).position.x + toCheck->at(i).width / 2){
+                    if(toCheck->at(i).moveable){
                     
                     
                     //if the wall is movable then the player pushes it along to the left
-                        toCheck[i]->position.x += (vro.position.x + vro.width) - toCheck[i]->position.x + 10;
+                        toCheck->at(i).position.x += (vro.position.x + vro.width) - toCheck->at(i).position.x + 10;
                     }else{
                     //sets the players position to the edge of the object hit (left)
-                        vro.position.x = toCheck[i]->position.x - vro.width;
+                        vro.position.x = toCheck->at(i).position.x - vro.width;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (left)
@@ -187,13 +187,13 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                     
                     
                 }else{
-                    if(toCheck[i].moveable){
+                    if(toCheck->at(i).moveable){
                         //if the wall is movable then the player pushes it along to the right
-                        toCheck[i]->position.x -= (toCheck[i]->position.x + toCheck[i]->width) - vro.position.x + 10;
+                        toCheck->at(i).position.x -= (toCheck->at(i).position.x + toCheck->at(i).width) - vro.position.x + 10;
                         
                     }else{
                         //sets the players position to the edge of the object hit (right) 
-                        vro.position.x = toCheck[i]->position.x + toCheck[i]->width;
+                        vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit () right
@@ -207,30 +207,30 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < toCheck->size(); i++){
             //uses raylibs built in collision detection functino given two Rec objects as paramaters 
-            if (CheckCollisionRecs({vro.position.x, vro.position.y + distance, vro.width, vro.height}, {toCheck[i]->position.x, toCheck[i]->position.y,toCheck[i]->width, toCheck[i]->height})){
+            if (CheckCollisionRecs({vro.position.x, vro.position.y + distance, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width, toCheck->at(i).height})){
                 //determines if the players starting position is above of the objected collided with
-                if (vro.position.y < toCheck[i]->position.y + toCheck[i]->height / 2){
+                if (vro.position.y < toCheck->at(i).position.y + toCheck->at(i).height / 2){
                     //checks if the wall is moveable and pushes it
-                    if (toCheck[i]->moveable){
-                        toCheck[i]->position.y += (vro.position.y + vro.height) - toCheck[i]->position.y + 10;
-                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {toCheck[i]->position.x, toCheck[i]->position.y,toCheck[i]->width,toCheck[i]->height})){
+                    if (toCheck->at(i).moveable){
+                        toCheck->at(i).position.y += (vro.position.y + vro.height) - toCheck->at(i).position.y + 10;
+                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
                         //sets the players position to the edge of the object hit (above)
-                        vro.position.y = toCheck[i]->position.y - vro.height;
+                        vro.position.y = toCheck->at(i).position.y - vro.height;
                         collision = true;
                         }
                     }else{
-                        vro.position.y = toCheck[i]->position.y - vro.height;
+                        vro.position.y = toCheck->at(i).position.y - vro.height;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (above)
                     
 
                 }else{
-                    if (toCheck[i]->moveable){
-                        toCheck[i]->position.y -= (toCheck[i]->position.y + toCheck[i]->height) - vro.position.y + 10;
+                    if (toCheck->at(i).moveable){
+                        toCheck->at(i).position.y -= (toCheck->at(i).position.y + toCheck->at(i).height) - vro.position.y + 10;
                         
                     }else{
-                        vro.position.y = toCheck[i]->position.y + toCheck[i]->height;
+                        vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (below)
@@ -245,33 +245,33 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
     for (int i = 0; i < toCheck->size(); i++){
         for (int j = 0; j < toCheck->size(); j++){
             //only checks collision if the wall at i is a movable wall and, its not the same as wall at j and, if wall at i is closer to the player than wall at j
-            if (toCheck[i]->moveable && j != i && abs(Distance(toCheck[i]->position, vro.position)) < abs(Distance(toCheck[j]->position, vro.position))){
+            if (toCheck->at(i).moveable && j != i && abs(Distance(toCheck->at(i).position, vro.position)) < abs(Distance(toCheck->at(i).position, vro.position))){
                 //splits collision between the x and y axis respectivly 
                if (axis == 'x'){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
-                   if (CheckCollisionRecs({toCheck[i]->position.x, toCheck[i]->position.y, toCheck[i]->width, toCheck[i]->height},{toCheck[j]->position.x, toCheck[j]->position.y, toCheck[j]->width, toCheck[j]->height})){
+                   if (CheckCollisionRecs({toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height},{toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height})){
                        //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
-                       if (toCheck[i]->position.x < toCheck[j]->position.x + toCheck[j]->width / 2){
-                           toCheck[i]->position.x = toCheck[j]->position.x - toCheck[i]->width;
-                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck[i]->position.x, toCheck[i]->position.y,toCheck[i]->width,toCheck[i]->height})){
-                           vro.position.x = toCheck[i]->position.x - vro.width;
-                            vro.position.x = toCheck[i]->position.x - vro.width;
+                       if (toCheck->at(i).position.x < toCheck->at(i).position.x + toCheck->at(i).width / 2){
+                           toCheck->at(i).position.x = toCheck->at(i).position.x - toCheck->at(i).width;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
+                           vro.position.x = toCheck->at(i).position.x - vro.width;
+                            vro.position.x = toCheck->at(i).position.x - vro.width;
                            }
                        //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
                        }else{
-                           toCheck[i]->position.x = toCheck[j]->position.x + toCheck[j]->width;
-                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck[i]->position.x, toCheck[i]->position.y,toCheck[i]->width,toCheck[i]->height})){
-                           vro.position.x = toCheck[i]->position.x + toCheck[i]->width;
-                            vro.position.x = toCheck[i]->position.x + toCheck[i]->width;
+                           toCheck->at(i).position.x = toCheck->at(i).position.x + toCheck->at(i).width;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
+                           vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
+                            vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
                            }
                        }
                    }
                 //splits collision between the x and y axis respectivly 
                }else if (axis == 'y'){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
-                   if (CheckCollisionRecs({toCheck[i]->position.x, toCheck[i]->position.y, toCheck[i]->width, toCheck[i]->height},{toCheck[j]->position.x, toCheck[j]->position.y, toCheck[j]->width, toCheck[j]->height})){
+                   if (CheckCollisionRecs({toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height},{toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height})){
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
-                       if (toCheck[i]->position.y < toCheck[j]->position.y + (float)toCheck[j]->height / 2){
+                       if (toCheck->at(i).position.y < toCheck->at(i).position.y + (float)toCheck[j]->height / 2){
                            toCheck[i]->position.y = toCheck[j]->position.y - toCheck[i]->height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck[i]->position.x, toCheck[i]->position.y,toCheck[i]->width,toCheck[i]->height})){
                            vro.position.y = toCheck[i]->position.y - vro.height;
