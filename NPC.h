@@ -1,13 +1,15 @@
 #include "raylib.h"
 
+
 class Npc{
     public:
-    int width = 50;
-    int height = 100;
+    int width ;
+    int height;
     Vector2 position;
     std::string name;
     Texture2D sprite;
     std::string line;
+    bool moveable;
     char state;
     Npc(int width, int height, Vector2 position, std::string name, std::string line, char state){
         this-> width = width;
