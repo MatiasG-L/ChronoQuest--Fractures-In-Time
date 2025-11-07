@@ -161,7 +161,7 @@ int main(void)
                 }
                 
                 for(int i = 0; i < npcs.size(); i++){
-                    DrawRectangle(npcs.at(i).position.x,npcs.at(i).position.y,npcs.at(i).width,npcs.at(i).height,RED);
+                    DrawRectangle(npcs.at(i).position.x, npcs.at(i).position.y, npcs.at(i).width, npcs.at(i).height, RED);
                 }
                 
 

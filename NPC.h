@@ -3,8 +3,8 @@
 
 class Npc{
     public:
-    int width ;
-    int height;
+    float width;
+    float height;
     Vector2 position;
     std::string name;
     Texture2D sprite;
@@ -12,12 +12,12 @@ class Npc{
     bool moveable;
     char state;
     Npc(int width, int height, Vector2 position, std::string name, std::string line, char state){
-        this-> width = width;
-        this-> height = height;
-        this-> position = position;
-        this-> name = name;
-        this-> line = line;
-        this-> width =  state;
+        this->width = width;
+        this->height = height;
+        this->position = position;
+        this->name = name;
+        this->line = line;
+        this->width =  state;
     }
 };
 class ImpNpc : public Npc{
