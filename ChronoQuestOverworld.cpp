@@ -288,7 +288,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                            }
                        //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
                        }else{
-                           toCheck->at(i).position.x = toCheck->at(j).position.x + toCheck->at(j).width;
+                           toCheck->at(i).position.x = toCheck->at(j).position.x + toCheck->at(i).width;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
                            //vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
                             vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
