@@ -2,8 +2,8 @@
 
 class Wall{
     public:
-    int height;
-    int width;
+    float height;
+    float width;
     Vector2 position;
     bool moveable = false;
     Color sqrColor;
