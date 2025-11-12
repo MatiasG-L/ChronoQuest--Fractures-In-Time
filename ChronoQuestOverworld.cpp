@@ -300,14 +300,14 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height},{toCheck->at(j).position.x, toCheck->at(j).position.y, toCheck->at(j).width, toCheck->at(j).height})){
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
-                       if (toCheck->at(i).position.y + toCheck->at(i).height / 2 < toCheck->at(j).position.y + toCheck->at(j).height / 2){
-                           toCheck->at(i).position.y = toCheck->at(j).position.y - toCheck->at(j).height;
+                       if (toCheck->at(i).position.y + toCheck->at(i).height / 2 > toCheck->at(j).position.y + toCheck->at(j).height / 2){
+                           toCheck->at(i).position.y = toCheck->at(j).position.y - toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(j).position.x, toCheck->at(j).position.y,toCheck->at(j).width,toCheck->at(j).height})){
                            vro.position.y = toCheck->at(j).position.y - vro.height;
                            }
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
                        }else{
-                           toCheck->at(i).position.y = toCheck->at(j).position.y + toCheck->at(j).height;
+                           toCheck->at(i).position.y = toCheck->at(j).position.y + toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
                            vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
                            }
