@@ -94,48 +94,48 @@ int main(void)
         
         
          if (IsKeyDown(KEY_W)){
-            coll<Npc>(-10, 'y', &npcs);
+            //coll<Npc>(-10, 'y', &npcs);
             coll<Wall>(-10, 'y', &walls);
           }
         else if (IsKeyDown(KEY_A)){
-            coll<Npc>(-10, 'x', &npcs);
+            //coll<Npc>(-10, 'x', &npcs);
             coll<Wall>(-10, 'x', &walls);
             
           }
         else if (IsKeyDown(KEY_S)){
-            coll<Npc>(10, 'y', &npcs);
+            //coll<Npc>(10, 'y', &npcs);
             coll<Wall>(10, 'y', &walls);
             
           }
         else if (IsKeyDown(KEY_D)){
-            coll<Npc>(10, 'x', &npcs);
+            //coll<Npc>(10, 'x', &npcs);
             coll<Wall>(10, 'x', &walls);
             
           }
         else if (IsKeyDown(KEY_UP)){
-            coll<Npc>(-10, 'y', &npcs);
+            //coll<Npc>(-10, 'y', &npcs);
             coll<Wall>(-10, 'y', &walls);
             
           }
         else if (IsKeyDown(KEY_LEFT)){
-            coll<Npc>(-10, 'x', &npcs);
+            //coll<Npc>(-10, 'x', &npcs);
             coll<Wall>(-10, 'x', &walls);
             
           }
         else if (IsKeyDown(KEY_DOWN)){
-            coll<Npc>(10, 'y', &npcs);
+            //coll<Npc>(10, 'y', &npcs);
             coll<Wall>(10, 'y', &walls);
             
           }
         else if (IsKeyDown(KEY_RIGHT)){
-            coll<Npc>(10, 'x', &npcs);
+            //coll<Npc>(10, 'x', &npcs);
             coll<Wall>(10, 'x', &walls);
             
           }
       
         
-        coll<Npc>(0, 'x', &npcs);
-        coll<Npc>(0, 'y', &npcs);
+        //coll<Npc>(0, 'x', &npcs);
+        //coll<Npc>(0, 'y', &npcs);
         
         coll<Wall>(0, 'x', &walls);
         coll<Wall>(0, 'y', &walls);
@@ -298,18 +298,18 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                 //splits collision between the x and y axis respectivly 
                }else if (axis == 'y'){
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
-                   if (CheckCollisionRecs({toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height},{toCheck->at(j).position.x, toCheck->at(j).position.y, toCheck->at(j).width, toCheck->at(j).height})){
+                   if (CheckCollisionRecs({toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height},{toCheck->at(j).position.x,    toCheck->at(j).position.y, toCheck->at(j).width, toCheck->at(j).height})){
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
-                       if (toCheck->at(i).position.y + toCheck->at(i).height / 2 > toCheck->at(j).position.y + toCheck->at(j).height / 2){
+                       if (toCheck->at(i).position.y - toCheck->at(i).height / 2 > toCheck->at(j).position.y - toCheck->at(j).height / 2){
                            toCheck->at(i).position.y = toCheck->at(j).position.y - toCheck->at(i).height;
-                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(j).position.x, toCheck->at(j).position.y,toCheck->at(j).width,toCheck->at(j).height})){
-                           vro.position.y = toCheck->at(j).position.y - vro.height;
+                           if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
+                                vro.position.y = toCheck->at(i).position.y - vro.height;
                            }
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
                        }else{
                            toCheck->at(i).position.y = toCheck->at(j).position.y + toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
-                           vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
+                                vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
                            }
                        }
                    }
