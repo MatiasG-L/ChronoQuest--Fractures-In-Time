@@ -131,14 +131,17 @@ int main(void)
             //coll<Npc>(10, 'x', &npcs);
             coll<Wall>(10, 'x', &walls);
             
-          }
+        }else{
+            //coll<Npc>(0, 'x', &npcs);
+            //coll<Npc>(0, 'y', &npcs);
+        
+            coll<Wall>(0, 'y', &walls);
+            coll<Wall>(0, 'x', &walls);
+        }
       
         
-        //coll<Npc>(0, 'x', &npcs);
-        //coll<Npc>(0, 'y', &npcs);
         
-        coll<Wall>(0, 'x', &walls);
-        coll<Wall>(0, 'y', &walls);
+        
      
         // Draw, where the scene actually gets rendered and drawn out
         BeginDrawing();
@@ -300,8 +303,8 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                    //checks for a collision between wall at i and wall at j using raylibs built in CheckCollisionRecs() function
                    if (CheckCollisionRecs({toCheck->at(i).position.x, toCheck->at(i).position.y, toCheck->at(i).width, toCheck->at(i).height},{toCheck->at(j).position.x,    toCheck->at(j).position.y, toCheck->at(j).width, toCheck->at(j).height})){
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
-                       if (toCheck->at(i).position.y - toCheck->at(i).height / 2 > toCheck->at(j).position.y - toCheck->at(j).height / 2){
-                           toCheck->at(i).position.y = toCheck->at(j).position.y - toCheck->at(i).height;
+                       if (toCheck->at(i).position.y + toCheck->at(i).height / 2 < toCheck->at(j).position.y + toCheck->at(j).height / 2){
+                           toCheck->at(i).position.y = toCheck->at(j).position.y + toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
                                 vro.position.y = toCheck->at(i).position.y - vro.height;
                            }
@@ -309,7 +312,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                        }else{
                            toCheck->at(i).position.y = toCheck->at(j).position.y + toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
-                                vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
+                                vro.position.y = toCheck->at(i).position.y - toCheck->at(i).height;
                            }
                        }
                    }
