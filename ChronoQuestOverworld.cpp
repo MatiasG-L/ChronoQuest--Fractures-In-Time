@@ -134,8 +134,10 @@ int main(void)
         }else{
             //coll<Npc>(0, 'x', &npcs);
             //coll<Npc>(0, 'y', &npcs);
-            //coll<Wall>(0, 'x', &walls);
-            //coll<Wall>(0, 'y', &walls);
+            
+            
+        
+            
             
         }
       
@@ -209,9 +211,10 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                     
                     //if the wall is movable then the player pushes it along to the left
                         toCheck->at(i).position.x += (vro.position.x + vro.width) - toCheck->at(i).position.x + 10;
+                        
                     }else{
                     //sets the players position to the edge of the object hit (left)
-                        vro.position.x = toCheck->at(i).position.x - vro.width;
+                        vro.position.x = toCheck->at(i).position.x - vro.width - 10;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (left)
@@ -223,9 +226,10 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                         //if the wall is movable then the player pushes it along to the right
                         toCheck->at(i).position.x -= (toCheck->at(i).position.x + toCheck->at(i).width) - vro.position.x + 10;
                         
+                        
                     }else{
                         //sets the players position to the edge of the object hit (right) 
-                        vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
+                        vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width + 10;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit () right
@@ -245,13 +249,11 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                     //checks if the wall is moveable and pushes it
                     if (toCheck->at(i).moveable){
                         toCheck->at(i).position.y += (vro.position.y + vro.height) - toCheck->at(i).position.y + 10;
-                        if (CheckCollisionRecs({vro.position.x + distance, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
-                        //sets the players position to the edge of the object hit (above)
-                        vro.position.y = toCheck->at(i).position.y - vro.height;
-                        collision = true;
-                        }
+                        
+                        
+                        
                     }else{
-                        vro.position.y = toCheck->at(i).position.y - vro.height;
+                        vro.position.y = toCheck->at(i).position.y - vro.height - 10;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (above)
@@ -262,7 +264,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                         toCheck->at(i).position.y -= (toCheck->at(i).position.y + toCheck->at(i).height) - vro.position.y + 10;
                         
                     }else{
-                        vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
+                        vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height + 10;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (below)
