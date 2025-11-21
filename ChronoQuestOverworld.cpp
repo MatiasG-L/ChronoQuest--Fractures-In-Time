@@ -214,7 +214,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                         
                     }else{
                     //sets the players position to the edge of the object hit (left)
-                        vro.position.x = toCheck->at(i).position.x - vro.width - 10;
+                        vro.position.x = toCheck->at(i).position.x - vro.width;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (left)
@@ -229,7 +229,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                         
                     }else{
                         //sets the players position to the edge of the object hit (right) 
-                        vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width + 10;
+                        vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit () right
@@ -253,7 +253,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                         
                         
                     }else{
-                        vro.position.y = toCheck->at(i).position.y - vro.height - 10;
+                        vro.position.y = toCheck->at(i).position.y - vro.height;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (above)
@@ -264,7 +264,7 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                         toCheck->at(i).position.y -= (toCheck->at(i).position.y + toCheck->at(i).height) - vro.position.y + 10;
                         
                     }else{
-                        vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height + 10;
+                        vro.position.y = toCheck->at(i).position.y + toCheck->at(i).height;
                         collision = true;
                     }
                     //sets the players position to the edge of the object hit (below)
