@@ -17,12 +17,6 @@ class Npc{
         this->position = position;
         this->name = name;
         this->line = line;
-        this->width =  state;
+        this->state = state;
     }
-};
-class ImpNpc : public Npc{
-    
-};
-class QGNpc : public Npc{
-    
 };

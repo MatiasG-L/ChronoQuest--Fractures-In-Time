@@ -28,9 +28,9 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
-Npc A(100, 100, {0,0}, "NPC A", "Ultron my goat", '1');
-Npc B(100, 100, {500,0}, "NPC A", "Ultron my goat", '1');
-Npc C(100, 100, {0,500}, "NPC A", "Ultron my goat", '1');
+Npc A(200, 200, {0,0}, "NPC A", "Ultron my goat", '1');
+Npc B(200, 200, {500,0}, "NPC A", "Ultron my goat", '1');
+Npc C(200, 200, {0,500}, "NPC A", "Ultron my goat", '1');
 std::vector<Wall> walls;
 std::vector<Npc> npcs; 
 
@@ -94,51 +94,48 @@ int main(void)
         
         
          if (IsKeyDown(KEY_W)){
-            //coll<Npc>(-10, 'y', &npcs);
+            coll<Npc>(-10, 'y', &npcs);
             coll<Wall>(-10, 'y', &walls);
           }
         else if (IsKeyDown(KEY_A)){
-            //coll<Npc>(-10, 'x', &npcs);
+            coll<Npc>(-10, 'x', &npcs);
             coll<Wall>(-10, 'x', &walls);
             
           }
         else if (IsKeyDown(KEY_S)){
-            //coll<Npc>(10, 'y', &npcs);
+            coll<Npc>(10, 'y', &npcs);
             coll<Wall>(10, 'y', &walls);
             
           }
         else if (IsKeyDown(KEY_D)){
-            //coll<Npc>(10, 'x', &npcs);
+            coll<Npc>(10, 'x', &npcs);
             coll<Wall>(10, 'x', &walls);
             
           }
         else if (IsKeyDown(KEY_UP)){
-            //coll<Npc>(-10, 'y', &npcs);
+            coll<Npc>(-10, 'y', &npcs);
             coll<Wall>(-10, 'y', &walls);
             
           }
         else if (IsKeyDown(KEY_LEFT)){
-            //coll<Npc>(-10, 'x', &npcs);
+            coll<Npc>(-10, 'x', &npcs);
             coll<Wall>(-10, 'x', &walls);
             
           }
         else if (IsKeyDown(KEY_DOWN)){
-            //coll<Npc>(10, 'y', &npcs);
+            coll<Npc>(10, 'y', &npcs);
             coll<Wall>(10, 'y', &walls);
             
           }
         else if (IsKeyDown(KEY_RIGHT)){
-            //coll<Npc>(10, 'x', &npcs);
+            coll<Npc>(10, 'x', &npcs);
             coll<Wall>(10, 'x', &walls);
             
         }else{
-            //coll<Npc>(0, 'x', &npcs);
-            //coll<Npc>(0, 'y', &npcs);
-            
-            
-        
-            
-            
+            coll<Npc>(0, 'x', &npcs);
+            coll<Npc>(0, 'y', &npcs);
+            coll<Wall>(0, 'x', &walls);
+            coll<Wall>(0, 'y', &walls);
         }
       
         
@@ -193,7 +190,7 @@ int main(void)
     return 0;
 }
 //function for collision handleling that takes paramaters for the distance desired to move and the axis on which to move
-template <typename T> void coll(float distance, char axis, std::vector<T> *toCheck){
+template<typename T> void coll(float distance, char axis, std::vector<T> *toCheck){
     //boolean to keep trabk of whether a collision was detected in th function
     bool collision = false;
     //collision on x axis
@@ -242,15 +239,14 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
     }else if (axis == 'y'){
         //loops through a vector of Wall objects to check for collision
         for(int i = 0; i < toCheck->size(); i++){
-            //uses raylibs built in collision detection functino given two Rec objects as paramaters 
+            //uses raylibs built in collision detection function given two Rec objects as paramaters 
             if (CheckCollisionRecs({vro.position.x, vro.position.y + distance, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width, toCheck->at(i).height})){
                 //determines if the players starting position is above of the objected collided with
                 if (vro.position.y < toCheck->at(i).position.y + toCheck->at(i).height / 2){
                     //checks if the wall is moveable and pushes it
                     if (toCheck->at(i).moveable){
                         toCheck->at(i).position.y += (vro.position.y + vro.height) - toCheck->at(i).position.y + 10;
-                        
-                        
+
                         
                     }else{
                         vro.position.y = toCheck->at(i).position.y - vro.height;
@@ -289,14 +285,16 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                            toCheck->at(i).position.x = toCheck->at(j).position.x - toCheck->at(i).width;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
                            //vro.position.x = toCheck->at(i).position.x - vro.width;
-                            vro.position.x = toCheck->at(i).position.x - vro.width - 10;
+                            vro.position.x = toCheck->at(i).position.x - vro.width;
+                            collision = true;
                            }
                        //splits the way collision is handled depending if the wall is on the left or right of its collision respectivly
                        }else{
                            toCheck->at(i).position.x = toCheck->at(j).position.x + toCheck->at(i).width;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
                            //vro.position.x = toCheck->at(i).position.x + toCheck->at(i).width;
-                            vro.position.x = toCheck->at(i).position.x + vro.width + 10;
+                            vro.position.x = toCheck->at(i).position.x + vro.width ;
+                            collision = true;
                            }
                        }
                    }
@@ -308,13 +306,15 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
                        if (toCheck->at(i).position.y - (toCheck->at(i).height / 2) < toCheck->at(j).position.y - (toCheck->at(j).height / 2)){
                            toCheck->at(i).position.y = toCheck->at(j).position.y - toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
-                                vro.position.y = toCheck->at(i).position.y - vro.height - 10;
+                                vro.position.y = toCheck->at(i).position.y - vro.height;
+                                collision = true;
                            }
                        //splits the way collision is handled depending if the wall is above or below of its collision respectivly
                        }else{
                            toCheck->at(i).position.y = toCheck->at(j).position.y + toCheck->at(i).height;
                            if (CheckCollisionRecs({vro.position.x, vro.position.y, vro.width, vro.height}, {toCheck->at(i).position.x, toCheck->at(i).position.y,toCheck->at(i).width,toCheck->at(i).height})){
-                                vro.position.y = toCheck->at(i).position.y + vro.height + 10;
+                                vro.position.y = toCheck->at(i).position.y + vro.height;
+                                collision = true;
                            }
                        }
                    }
@@ -322,6 +322,8 @@ template <typename T> void coll(float distance, char axis, std::vector<T> *toChe
             }
         }
     }
+    
+    
     
     //if no collisin was detected then the player is free to move the desired distance
     if (!collision){
