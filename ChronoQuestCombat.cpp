@@ -226,8 +226,19 @@ int main(void)
                 Vector2 pos3 = pos;
                 Vector2 pos4 = pos;
                 
+                DrawRectangleRounded({pos.x - 800, pos.y - 200, 1000, 400}, 100, 10, CLEARBASE(BLACK, 100));
                 
-        
+                if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos1, {pos1.x, pos1.y + 200}, {pos1.x + 200, pos1.y})){
+                    ui.UIWheel = 4;
+                }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos2, {pos2.x, pos2.y - 200}, {pos2.x + 200, pos2.y})){
+                    ui.UIWheel = 2;
+                }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos3, {pos3.x, pos3.y - 200}, {pos3.x - 200, pos3.y})){
+                    ui.UIWheel = 1;
+                }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos4, {pos4.x, pos4.y + 200}, {pos4.x - 200, pos4.y})){
+                    ui.UIWheel = 3;
+                }else{
+                    ui.UIWheel = 0;
+                }
         
                 switch(ui.UIWheel){
                     case 0:
