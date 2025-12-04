@@ -228,9 +228,6 @@ int main(void)
                 Vector2 pos3 = pos;
                 Vector2 pos4 = pos;
                 
-                
-                
-                
                 if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos1, {pos1.x, pos1.y + 200}, {pos1.x + 200, pos1.y})){
                     ui.UIWheel = 4;
                 }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos2, {pos2.x, pos2.y - 200}, {pos2.x + 200, pos2.y})){
@@ -243,9 +240,15 @@ int main(void)
                     ui.UIWheel = 0;
                 }
                 
+                
+                
                 if(IsMouseButtonPressed(0) && ui.UIWheel != 0){
                     ui.menu = true;
                     ui.UIBackW = 400;
+                }
+                
+                if(IsMouseButtonPressed(1)){
+                    ui.menu = false;
                 }
         
                 switch(ui.UIWheel){
@@ -315,7 +318,22 @@ int main(void)
                     DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
                     DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
                     DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
+                }else{
+                    
+                    Vector2 pos1temp = pos;
+                    Vector2 pos2temp = pos;
+                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
+                        pos1temp.x -= 40;
+                    }
+                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
+                        pos2temp.x += 40;
+                    }
+                    
+                    DrawCircleSectorLines(pos1temp, 200, 90, 270, 50, BLUE);
+                    DrawCircleSectorLines(pos2temp, 200, 450, 270, 50, RED);
                 }
+                
+                
         //ends the drawing phase of the program     
         EndDrawing();
         //----------------------------------------------------------------------------------
