@@ -76,6 +76,9 @@ int main(void)
         Vector2 pos03 = {1300, 650};
         Vector2 pos04 = {1300, 650};
         
+        Vector2 posS1 = {1300, 650};
+        Vector2 posS2 = {1300, 650};
+        
         int rad1 = 200;
         int rad2 = 200;
         int rad3 = 200;
@@ -228,6 +231,9 @@ int main(void)
                 Vector2 pos3 = pos;
                 Vector2 pos4 = pos;
                 
+                Vector2 pos1temp = {pos.x - 10, pos.y};
+                Vector2 pos2temp = {pos.x + 10, pos.y};
+                
                 if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos1, {pos1.x, pos1.y + 200}, {pos1.x + 200, pos1.y})){
                     ui.UIWheel = 4;
                 }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos2, {pos2.x, pos2.y - 200}, {pos2.x + 200, pos2.y})){
@@ -251,7 +257,13 @@ int main(void)
                     ui.menu = false;
                 }
         
-                switch(ui.UIWheel){
+                
+                
+                
+                //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
+                if(!ui.menu){
+                    
+                    switch(ui.UIWheel){
                     case 0:
                         pos1 = pos;
                         pos2 = pos;
@@ -261,6 +273,14 @@ int main(void)
                         ui.rad2 = 200;
                         ui.rad3 = 200;
                         ui.rad4 = 200;
+                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
                         break;
                     
                     case 1:
@@ -270,6 +290,14 @@ int main(void)
                         ui.rad4 = 200;
                         ui.rad1 = 200;
                         ui.rad2 = 200;
+                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                        DrawCircleSector(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, WHITE);
+                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
                         break;
                         
                     case 2:
@@ -279,6 +307,14 @@ int main(void)
                         ui.rad3 = 200;
                         ui.rad4 = 200;
                         ui.rad1 = 200;
+                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                        DrawCircleSector(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
                         break;
                         
                     case 3:
@@ -288,6 +324,14 @@ int main(void)
                         ui.rad1 = 200;
                         ui.rad2 = 200;
                         ui.rad3 = 200;
+                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                        DrawCircleSector(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
                         break;
                         
                     case 4:
@@ -297,42 +341,49 @@ int main(void)
                         ui.rad2 = 200;
                         ui.rad3 = 200;
                         ui.rad4 = 200;
+                        DrawCircleSector(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
                         break;
                         
-                    default:
+                        default:
                         break;
+                    }
+                    
+                }else{
+                  
+                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
+                        pos1temp.x -= 40;
+                        DrawCircleSector(ui.posS1, 200, 90, 270, 50, BLUE);
+                    }else{
+                        DrawCircleSectorLines(ui.posS1, 200, 90, 270, 50, BLUE);
+                    }
+                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
+                        pos2temp.x += 40;
+                        DrawCircleSector(ui.posS2, 200, 450, 270, 50, RED);
+
+                    }else{
+                        DrawCircleSectorLines(ui.posS2, 200, 450, 270, 50, RED);
+                    }
+                    
+                    
+                    
                 }
+                
+                ui.posS1 = lerpV(ui.posS1, pos1temp , 0.3);
+                ui.posS2 = lerpV(ui.posS2, pos2temp, 0.3);
                 
                 ui.pos01 = lerpV(ui.pos01, pos1 , 0.3);
                 ui.pos02 = lerpV(ui.pos02, pos2, 0.3);
                 ui.pos03 = lerpV(ui.pos03, pos3, 0.3);
                 ui.pos04 = lerpV(ui.pos04, pos4, 0.3);
-                //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
-                if(!ui.menu){
-                    
-                    DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
-                    DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
-                    DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
-                    DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
-                    DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
-                    DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
-                    DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
-                    DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
-                }else{
-                    
-                    Vector2 pos1temp = pos;
-                    Vector2 pos2temp = pos;
-                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
-                        pos1temp.x -= 40;
-                    }
-                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
-                        pos2temp.x += 40;
-                    }
-                    
-                    DrawCircleSectorLines(pos1temp, 200, 90, 270, 50, BLUE);
-                    DrawCircleSectorLines(pos2temp, 200, 450, 270, 50, RED);
-                }
                 
+
                 
         //ends the drawing phase of the program     
         EndDrawing();
