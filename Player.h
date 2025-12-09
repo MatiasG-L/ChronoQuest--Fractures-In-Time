@@ -1,11 +1,11 @@
-# include "raylib.h"
+# include "raylib.h" 
 
 class Player{
     public:
     Texture2D textureBack;
     Texture2D textureWorld;
-    int width = 50;
-    int height = 100;
+    float width = 50;
+    float height = 100;
     Vector2 position;
     std::string name;
     float health = 100;

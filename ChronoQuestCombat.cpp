@@ -69,6 +69,7 @@ int main(void)
     camera.zoom = 1.0f;
     camera.target = {800,450};
     
+    bool turn = false;
     
     typedef struct{
         Vector2 pos01 = {1300, 650};
