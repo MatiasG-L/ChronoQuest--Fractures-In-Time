@@ -86,6 +86,7 @@ int main(void)
         int rad4 = 200;
         
         float HealthWidth = 0;
+        float HealthWidthE = 0;
         float EnergyWidth = 0;
         float StaminaWidth = 0;
         int UIWheel = 0;
@@ -108,7 +109,7 @@ int main(void)
           zoomTarget = 1.2;
       }else if(IsKeyPressed(KEY_RIGHT)){
           zoomTarget = 1.5;
-          newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2};
+          newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
       }else if(IsKeyPressed(KEY_UP)){
           newTarget = {800,450};
           zoomTarget = 1;
@@ -187,7 +188,14 @@ int main(void)
                 DrawTextureEx(PlayerSprite, player.position, 0, 6, WHITE);
                 //DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
                 DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -150}), 0, 5, WHITE);
-                
+                ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.05);  
+                //Draws the gray background for the bar when it gets depleted 
+                DrawRectangleRounded({900, -100, 500, 25}, 20, 20, GREEN);
+                //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
+                DrawRectangleRounded({900, -100, ui.HealthWidthE, 25}, 20, 20, MAROON);
+                //Draws the outline for the bar to make it look a little better
+                DrawRectangleRoundedLines({900, -100, 500, 25}, 20, 20, 10, BLACK);
+                 DrawRectangleRoundedLines({900, -100, 500, 25}, 20, 20, BLACK);
                 
                  
                 
@@ -196,7 +204,8 @@ int main(void)
                 //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
                 //DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);
                 
-                DrawRectangle(-100, 0, 1200, 225, CLEARBASE(BLACK, 100));
+                DrawRectangle(-100, 0, 1200, 225, CLEARBASE(BLACK, 75));
+                DrawRectangleLines(-100, 0, 1200, 225, CLEARBASE(BLACK, 100));
                 
                 
                 //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
@@ -214,7 +223,7 @@ int main(void)
                 ui.EnergyWidth = lerp(ui.EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
                 DrawRectangleRounded({50, 100, 1000, 25}, 20, 20, GRAY);
                 DrawRectangleRounded({50, 100, ui.EnergyWidth, 25}, 20, 20, BLUE);
-                DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 2, BLACK);
+                DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 20, BLACK);
                 
                 ui.StaminaWidth = lerp(ui.StaminaWidth, lerp(0, 1000, player.stamina/player.maxStamina), 0.05);   
                 DrawRectangleRounded({50, 150, 1000, 25}, 20, 20, GRAY);
@@ -225,7 +234,7 @@ int main(void)
                 
                 Vector2 pos = {1300, 650};
                 
-                
+                DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 4, BLACK);
                 
                 Vector2 pos1 = pos;
                 Vector2 pos2 = pos;
