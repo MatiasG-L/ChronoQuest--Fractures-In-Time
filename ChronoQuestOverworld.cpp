@@ -19,6 +19,8 @@
 #include <string>
 #include <cmath>
 #include <queue>
+#include <fstream>
+#include <sstream>
 
 #include "Wall.h"
 #include "raylib.h"
@@ -33,11 +35,12 @@ Npc B(200, 200, {500,0}, "NPC A", "Ultron my goat", '1');
 Npc C(200, 200, {0,500}, "NPC A", "Ultron my goat", '1');
 std::vector<Wall> walls;
 std::vector<Npc> npcs; 
-
+Vector2 playerSpawn;
 template <typename T> void coll(float distance, char axis, std::vector<T> *toCheck);
-char plmove;
-int main(void)
-{
+void savelevel (std::vector<Wall> Objcts, Player);
+void loadlevel (std::string map);
+
+int main(void){
     
     npcs.push_back(A);
     npcs.push_back(B);
@@ -137,7 +140,9 @@ int main(void)
             coll<Wall>(0, 'x', &walls);
             coll<Wall>(0, 'y', &walls);
         }
-      
+      if (IsKeyPressed(KEY_SPACE)){
+          savelevel(walls, vro);
+      }
         
         
         
@@ -333,4 +338,101 @@ template<typename T> void coll(float distance, char axis, std::vector<T> *toChec
             vro.position.y += distance;
         }
     }
+    
+    
+   
+
 }
+    void savelevel(std::vector<Wall> Objcts, Player){
+        std::ostringstream mapName;
+        std::ifstream mapFind;
+        mapName << "Map.txt";
+
+        mapFind.open(mapName.str(), std::ifstream::in);
+        if (!mapFind.is_open()){
+            std::cout << "file not open";
+        }
+        std::cout << mapName.str();
+        mapFind.close();
+        std::ofstream mapFile(mapName.str());
+        std::ostringstream pushFile;
+        pushFile << "OBJECTS\n";
+        for(Wall obj : walls){
+            pushFile << obj.position.x;
+            pushFile << ", ";
+            pushFile << obj.position.y;
+            pushFile << ", ";
+            pushFile << obj.width;
+            pushFile << ", ";
+            pushFile << obj.height;
+            pushFile << ", ";
+            if(obj.moveable == true){
+                obj.moveable = 1;
+            }
+            pushFile << obj.moveable;
+            pushFile << "; \n";
+        }
+            pushFile << "PLAYER\n";
+            pushFile << vro.position.x;
+            pushFile << ", ";
+            pushFile << vro.position.y;
+            pushFile << ", ";
+            pushFile << vro.width;
+            pushFile << ", ";
+            pushFile << vro.height;
+            pushFile << ", ";
+            pushFile << playerSpawn.x;
+            pushFile << ", ";
+            pushFile << playerSpawn.y;
+            pushFile << "; \n";
+        std::string add = pushFile.str();
+        mapFile << add;
+        mapFile.close();
+    }
+    void loadlevel(std::string Map){
+        std::ifstream mapFile(Map);
+        std::string mapContents;
+        
+        
+        if(mapFile){
+            std::string mapLine;
+            while (getline( mapFile, mapLine)){
+                mapContents += mapLine + "\n";
+            }
+            mapFile.close();
+        }
+        
+        mapContents = mapContents.substr(10);
+        int counter = 0;
+        bool stop = false;
+        bool objs = false;
+        
+        std::vector<Wall> obj;
+        
+        int arrayPos = 0;
+        
+        while(!objs){
+            int dataList[4];
+            
+            while(mapContents.at(counter) != ',' && mapContents.at(counter) != ';'){
+                if (mapContents.at(counter) == 'O') objs = true;
+                if (mapContents.at(counter) == ';') stop = true;
+                counter++;
+            }
+            if(objs)break;
+            std::cout << mapContents.substr(0,counter) << "\n";
+            
+            dataList[arrayPos] = std::stoi (mapContents.substr(0,counter));
+            if(arrayPos < 4)arrayPos++;
+            else{
+                arrayPos = 0;
+                Wall obj1(dataList[0], dataList[1], dataList[2], dataList[3], dataList[4]);
+                obj.push_back(obj1);
+            }
+            
+            mapContents = mapContents.substr(counter + 2);
+            
+            counter = 0;
+            std::cout << "\n";
+        }
+    }
