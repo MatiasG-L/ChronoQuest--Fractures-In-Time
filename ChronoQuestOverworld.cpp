@@ -30,9 +30,6 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 Player vro(100, 100, {200, 450}, "Vro", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
-Npc A(200, 200, {0,0}, "NPC A", "Ultron my goat", '1');
-Npc B(200, 200, {500,0}, "NPC A", "Ultron my goat", '1');
-Npc C(200, 200, {0,500}, "NPC A", "Ultron my goat", '1');
 std::vector<Wall> walls;
 std::vector<Npc> npcs; 
 Vector2 playerSpawn;
@@ -45,7 +42,7 @@ int main(void){
     npcs.push_back(A);
     npcs.push_back(B);
     npcs.push_back(C);
-    
+    /*
     Wall one(100, 100, {4500, 100}, BLUE);
     walls.push_back(one);
     Wall two(300, 100, {-300, 250}, BLUE);
@@ -60,7 +57,7 @@ int main(void){
     walls.push_back(six);
     Wall sv(100,100, {0,300}, true, GREEN);
     walls.push_back(sv);
-    
+    */
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -85,6 +82,8 @@ int main(void){
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
     
+    
+    loadlevel("Map.txt");
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
@@ -402,7 +401,7 @@ template<typename T> void coll(float distance, char axis, std::vector<T> *toChec
             mapFile.close();
         }
         
-        mapContents = mapContents.substr(10);
+        mapContents = mapContents.substr(7);
         int counter = 0;
         bool stop = false;
         bool objs = false;
@@ -410,29 +409,42 @@ template<typename T> void coll(float distance, char axis, std::vector<T> *toChec
         std::vector<Wall> obj;
         
         int arrayPos = 0;
-        
+        int dataList[5];
         while(!objs){
-            int dataList[4];
-            
-            while(mapContents.at(counter) != ',' && mapContents.at(counter) != ';'){
-                if (mapContents.at(counter) == 'O') objs = true;
-                if (mapContents.at(counter) == ';') stop = true;
-                counter++;
+
+            try{
+                while(mapContents.at(counter) != ',' && mapContents.at(counter) != ';'){
+                    if (mapContents.at(counter) == 'X') objs = true;
+                    else if (mapContents.at(counter) == ';') stop = true;
+                    else{
+                      counter++;
+                      std::cout << counter << ", ";                      
+                    } 
+                }
+                if(objs)break;
+                std::cout << mapContents.substr(0,counter) << "\n";
+                
+                dataList[arrayPos] = std::stoi(mapContents.substr(0,counter));
+                if(arrayPos < 4)arrayPos++;
+                else{
+                    arrayPos = 0;
+                    Wall obj1(dataList[3],  dataList[2], {dataList[0], dataList[1]}, dataList[4], BLACK);
+                    obj.push_back(obj1);
+                  
+                }
+                
+                mapContents = mapContents.substr(counter + 2);
+                
+                counter = 0;
+                std::cout << "\n";
+                walls = obj;
+               
+                
+            }catch(...){
+              walls = obj;
+              objs = true;
             }
-            if(objs)break;
-            std::cout << mapContents.substr(0,counter) << "\n";
-            
-            dataList[arrayPos] = std::stoi (mapContents.substr(0,counter));
-            if(arrayPos < 4)arrayPos++;
-            else{
-                arrayPos = 0;
-                Wall obj1(dataList[0], dataList[1], dataList[2], dataList[3], dataList[4]);
-                obj.push_back(obj1);
-            }
-            
-            mapContents = mapContents.substr(counter + 2);
-            
-            counter = 0;
-            std::cout << "\n";
         }
+        
+        
     }
