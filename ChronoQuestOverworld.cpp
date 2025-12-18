@@ -39,9 +39,7 @@ void loadlevel (std::string map);
 
 int main(void){
     
-    npcs.push_back(A);
-    npcs.push_back(B);
-    npcs.push_back(C);
+
     /*
     Wall one(100, 100, {4500, 100}, BLUE);
     walls.push_back(one);
@@ -58,6 +56,10 @@ int main(void){
     Wall sv(100,100, {0,300}, true, GREEN);
     walls.push_back(sv);
     */
+    bool dragging = false;
+    bool resizing = false;
+    bool editor = false;
+    
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -92,8 +94,10 @@ int main(void){
        
         
         
-        
-        
+        if (IsKeyPressed(KEY_R)){
+            editor = !editor;
+        }
+       
         
          if (IsKeyDown(KEY_W)){
             coll<Npc>(-10, 'y', &npcs);
@@ -163,7 +167,8 @@ int main(void){
                 
                 
                 for(int i = 0; i < walls.size(); i++){
-                    DrawRectangle(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,walls[i].sqrColor);
+                    if(editor) DrawRectangleLines(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,walls[i].sqrColor);
+                    else DrawRectangle(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,walls[i].sqrColor);
                 }
                 
                 for(int i = 0; i < npcs.size(); i++){
@@ -448,3 +453,6 @@ template<typename T> void coll(float distance, char axis, std::vector<T> *toChec
         
         
     }
+    
+    
+    
