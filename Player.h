@@ -15,7 +15,6 @@ class Player{
     float maxStamina = 100;
     int exp;
     int expRankUp;
-    Vector2 Velocity = {0,0};
     typedef struct{
         int physicalAtk;
         int specialAtk;
@@ -29,11 +28,10 @@ class Player{
     Stats stats;
     
     typedef struct{
-        int upgradeThreshold;
+        int attack;
+        int defence;
         float shieldMax;
         float shieldHealth;
-        int robustness;
-        int strength;
         int battery;
         int maxBattery;
     }Suit;
@@ -53,6 +51,14 @@ class Player{
         this->expRankUp = expRankUp;
         this->stats = stats;
         this->suit = suit;
+    }
+    
+    float specialDamageOut(){
+        return (stats.specialAtk * (1 + suit.attack/2) * rank/(stats.specialAtk + suit.attack)) * ((suit.battery/suit.maxBattery) + 0.5);
+    }
+    
+    float physicalDamageOut(){
+        return (stats.physicalAtk * (1 + suit.attack/2) * rank/(stats.physicalAtk + suit.attack)) * ((stamina/maxStamina) + 0.5);
     }
     
 };

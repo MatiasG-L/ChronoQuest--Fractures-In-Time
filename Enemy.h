@@ -2,7 +2,7 @@
 
 class Enemy{
     public:
-    Texture2D spriteBack;
+    Texture2D spriteFront;
     Texture2D spriteWorld;
     int width;
     int height;
@@ -11,7 +11,6 @@ class Enemy{
     float health;
     float maxHealth;
     int threatLevel;
-    int Anomaly;
     typedef struct{
         int physicalAtk;
         int specialAtk;

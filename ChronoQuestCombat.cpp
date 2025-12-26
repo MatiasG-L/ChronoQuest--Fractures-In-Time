@@ -28,7 +28,7 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 //(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
-Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {10,10,10,10,10,10,10});
+Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {5,5,100,100,100,100});
 //(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats)
 Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, {10,10,10,10,10});
 
@@ -54,6 +54,8 @@ int main(void)
     
     
     Texture2D IconA = LoadTexture("Assests/UI/Attack Icon.png");
+    Texture2D IconAS = LoadTexture("Assests/UI/AttackSIcon.png");
+    Texture2D IconAP = LoadTexture("Assests/UI/AttackPIcon.png");
     Texture2D IconB = LoadTexture("Assests/UI/Block Icon.png");
     Texture2D IconI = LoadTexture("Assests/UI/Items Icon.png");
     Texture2D IconR = LoadTexture("Assests/UI/Running Icon.png");
@@ -204,7 +206,7 @@ int main(void)
                 //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
                 DrawRectangleRounded({900, -100, ui.HealthWidthE, 25}, 20, 20, MAROON);
                 //Draws the outline for the bar to make it look a little better
-                DrawRectangleRoundedLines({900, -100, 600, 30}, 5, 5, 10, BLACK);
+                //DrawRectangleRoundedLines({900, -100, 600, 30}, 5, 5, 10, BLACK);
                  
                 
                  
@@ -224,7 +226,7 @@ int main(void)
                 //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
                 ui.HealthWidth = lerp(ui.HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);  
                 //Draws the outline for the bar to make it look a little better
-                DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 50, 1000, 25}, 20, 20, 10, BLUE);
+               // DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 50, 1000, 25}, 20, 20, 10, BLUE);
                 //Draws the gray background for the bar when it gets depleted 
                 DrawRectangleRounded({BarPos.x + 150, BarPos.y + 50, 1000, 25}, 20, 20, GRAY);
                 
@@ -236,18 +238,18 @@ int main(void)
                 ui.EnergyWidth = lerp(ui.EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
                 DrawRectangleRounded({BarPos.x + 150, BarPos.y + 100, 1000, 25}, 20, 20, GRAY);
                 DrawRectangleRounded({BarPos.x + 150, BarPos.y + 100, ui.EnergyWidth, 25}, 20, 20, BLUE);
-                DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 100, 1000, 25}, 20, 20, 20, BLACK);
+               //DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 100, 1000, 25}, 20, 20, 20, BLACK);
                 
                 ui.StaminaWidth = lerp(ui.StaminaWidth, lerp(0, 1000, player.stamina/player.maxStamina), 0.05);   
                 DrawRectangleRounded({BarPos.x + 150, BarPos.y + 150, 1000, 25}, 20, 20, GRAY);
                 DrawRectangleRounded({BarPos.x + 150, BarPos.y + 150, ui.StaminaWidth, 25}, 20, 20, YELLOW);
-                DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 150, 1000, 25}, 20, 20, 2, BLACK);
+                //DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 150, 1000, 25}, 20, 20, 2, BLACK);
                 
                 //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
                 
                 pos = lerpV(pos, ui.pos, 0.2);
                 
-                DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 4, BLACK);
+               //DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 4, BLACK);
                 
                 Vector2 pos1 = pos;
                 Vector2 pos2 = pos;
@@ -382,16 +384,20 @@ int main(void)
                   
                     if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
                         pos1temp.x -= 40;
-                        DrawCircleSector(ui.posS1, 200, 90, 270, 50, BLUE);
+                        DrawCircleSector(ui.posS1, 225, 90, 270, 50, BLUE);
+                        DrawTextureEx(IconAS , vectorAddition(ui.posS1, -140, -30), 0, 6, WHITE);
                     }else{
                         DrawCircleSectorLines(ui.posS1, 200, 90, 270, 50, BLUE);
+                        DrawTextureEx(IconAS , vectorAddition(ui.posS1, -110, -30), 0, 5.5, WHITE);
                     }
                     if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
                         pos2temp.x += 40;
-                        DrawCircleSector(ui.posS2, 200, 450, 270, 50, RED);
+                        DrawCircleSector(ui.posS2, 225, 450, 270, 50, RED);
+                        DrawTextureEx(IconAP , vectorAddition(ui.posS2, 60, -40), 0, 7, WHITE);
 
                     }else{
                         DrawCircleSectorLines(ui.posS2, 200, 450, 270, 50, RED);
+                        DrawTextureEx(IconAP , vectorAddition(ui.posS2, 40, -40), 0, 6, WHITE);
                     }
                     
                     
