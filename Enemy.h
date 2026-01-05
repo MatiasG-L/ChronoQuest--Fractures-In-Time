@@ -10,7 +10,12 @@ class Enemy{
     std::string name;
     float health;
     float maxHealth;
-    int threatLevel;
+    float stamina; 
+    float maxStamina;
+    float energy;
+    float maxEnergy;
+    int guard;
+    int level;
     typedef struct{
         int physicalAtk;
         int specialAtk;
@@ -21,13 +26,42 @@ class Enemy{
     
     Stats stats;
     
-    Enemy(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats){
+    Enemy(int width, int height, Vector2 position, std::string name, float maxHealth, int level, float maxStamina, float maxEnergy, Stats stats){
         this->width = width;
         this->height = height;
         this->position = position;
         this->name = name;
         this->maxHealth = maxHealth;
-        this->threatLevel = threatLevel;
+        this->level = level;
         this->stats = stats;
+        this->maxStamina = maxStamina;
+        this->maxEnergy = maxEnergy;
+        health = maxHealth;
+        stamina = maxStamina;
+        energy = maxEnergy;
+    } 
+    
+    float physicalDamageOut(){
+        return stats.physicalAtk + ((stats.physicalAtk * (level/100)) * 2) * (stamina / maxStamina);
     }
+    
+    float energyDamageOut(){
+        return stats.specialAtk + ((stats.specialAtk * (level/100)) * 2) * (energy / maxEnergy);
+    }
+    
+    float damageCalc(int type, float incoming){
+        if(GetRandomValue(0,100) <= 8){
+            return incoming;
+        }else{
+            switch(type){
+                case 0:
+                    return incoming - ((stats.specialDefence/100) * (incoming * 0.75f));
+                case 1:
+                    return incoming - (((stats.defence)/100) * (incoming * 0.75f));
+                default:
+                    return -1;
+            }
+        }
+    }
+    
 };

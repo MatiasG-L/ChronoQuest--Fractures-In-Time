@@ -15,6 +15,15 @@ class Player{
     float maxStamina = 100;
     int exp;
     int expRankUp;
+    
+    int frameCounter = 0; 
+    int frameSpeed = 4; //(fps)
+    int frameCount = 3;
+    int currentFrame = 0;
+    float aWidth;
+    Rectangle animRec = {0,0,0,0};
+    //std::string currentAnimation = "NULL";
+    
     typedef struct{
         int physicalAtk;
         int specialAtk;
@@ -38,9 +47,21 @@ class Player{
     
     Suit suit;
     
-    int weight;
-
+    typedef struct Animation{
+        int frameSpeed;
+        int frameCount;
+        float width;
+        float height;
+        std::string name;
+        bool loop;
+        Texture2D spriteSheet;
+    }Animation;
     
+    Animation idle;
+    Animation AttackP;
+    Animation AttackS;
+    
+    Animation currentAnimation;
     
     Player(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit){
         this->width = width;
@@ -60,5 +81,59 @@ class Player{
     float physicalDamageOut(){
         return (stats.physicalAtk * (1 + suit.attack/2) * rank/(stats.physicalAtk + suit.attack)) * ((stamina/maxStamina) + 0.5);
     }
+    
+    float damageCalc(int type, float incoming){
+        
+        if(GetRandomValue(0,100) <= 8){
+            return incoming;
+        }else{
+            switch(type){
+                case 0:
+                    return incoming - ((((stats.specialDefence + suit.defence)/2)/100) * (incoming * 0.75f));
+                case 1:
+                    return incoming - ((((stats.defence + suit.defence)/2)/100) * (incoming * 0.75f));
+                default:
+                    return -1;
+            }
+        }
+    }
+    
+    void changeAnimation(std::string name){
+        if(name == "Idle"){
+            currentAnimation = idle;
+            textureBack = idle.spriteSheet;
+        }else if(name == "Physical"){
+            currentAnimation = AttackP;
+            textureBack = AttackP.spriteSheet;
+        }else if(name == "Special"){
+            currentAnimation = AttackS;
+            textureBack = AttackS.spriteSheet;
+        }
+    }
+    
+    void animation(){
+        frameCounter++;
+
+        if (frameCounter >= (60/currentAnimation.frameSpeed))
+        {
+            frameCounter = 0;
+            currentFrame++;
+
+            if (currentFrame > currentAnimation.frameCount-1){
+                currentFrame = 0;
+                if(!currentAnimation.loop) changeAnimation("Idle");
+            }
+
+            animRec.x = (float)currentFrame*(float)currentAnimation.width/currentAnimation.frameCount;
+            animRec.y = 0;
+        }
+
+    }
+    
+    
+    Vector2 center(){
+        return {position.x + width/2, position.y + height/2};
+    }
+
     
 };

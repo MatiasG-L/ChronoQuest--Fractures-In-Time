@@ -227,6 +227,25 @@ typedef struct Vector2 {
 //linear intorpolation given two points as a Vector2
 Vector2 lerpV(Vector2 start, Vector2 end, float t){ return {lerp(start.x, end.x, t), lerp(start.y, end.y, t)}; }
 
+Vector2 Tween(Vector2 start, Vector2 end, float factor){
+    Vector2 result;
+    if(end.x > start.x){
+        result.x = start.x + factor;
+        if(result.x > end.x) result.x = end.x;
+    }else if(end.x < start.x){
+        result.x = start.x - factor;
+        if(result.x < end.x) result.x = end.x;
+    }
+    if(end.y > start.y){
+        result.y = start.y + factor;
+        if(result.y > end.y) result.y = end.y;
+    }else if(end.y < start.y){
+        result.y = start.y - factor;
+        if(result.y < end.y) result.y = end.y;
+    }
+    return result;
+}
+
 //return the sum of each axis as a Vector2
 Vector2 vectorAddition(Vector2 a, Vector2 b){return{a.x + b.x, a.y + b.y};}
 Vector2 vectorAddition(Vector2 a, float b){return{a.x + b, a.y + b};}

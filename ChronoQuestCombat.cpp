@@ -24,13 +24,15 @@
 #include "Player.h"
 #include "Enemy.h"
 
+#define PLAYERSCALE 15
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
 //(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
-Player player(200, 400, {200, 450}, "Player", 1, 50, {10,10,10,10,10,10,10}, {5,5,100,100,100,100});
-//(int width, int height, Vector2 position, std::string name, float maxHealth, int threatLevel, Stats stats)
-Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, {10,10,10,10,10});
+Player player(200, 400, {200, 400}, "Player", 1, 50, {10,10,10,10,10,10,10}, {5,5,100,100,100,100});
+//Enemy(int width, int height, Vector2 position, std::string name, float maxHealth, int level, float maxStamina, float maxEnergy, Stats stats)
+Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, 100, 100,{5,5,5,5,5});
 
 
 
@@ -51,12 +53,17 @@ int main(void)
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
+    Texture2D PlayerIdleC = LoadTexture("Assests/Player/PlayerIdleCombat.png");
+    Texture2D PlayerAttackP = LoadTexture("Assests/Player/PlayerAttackPhysical.png");
+    Texture2D PlayerAttackS = LoadTexture("Assests/Player/PlayerAttackSpecial.png");
     
-    
+    Texture2D BarFrame = LoadTexture("Assests/UI/BarFrame.png");
     Texture2D IconA = LoadTexture("Assests/UI/Attack Icon.png");
     Texture2D IconAS = LoadTexture("Assests/UI/AttackSIcon.png");
     Texture2D IconAP = LoadTexture("Assests/UI/AttackPIcon.png");
     Texture2D IconB = LoadTexture("Assests/UI/Block Icon.png");
+    Texture2D BlockP = LoadTexture("Assests/UI/BlockP.png");
+    Texture2D BlockS = LoadTexture("Assests/UI/BlockS.png");
     Texture2D IconI = LoadTexture("Assests/UI/Items Icon.png");
     Texture2D IconR = LoadTexture("Assests/UI/Running Icon.png");
     Texture2D PlayerSprite = LoadTexture("Assests/Player/pixilart-sprite.png");
@@ -68,10 +75,14 @@ int main(void)
     Camera2D camera = { 0 };
     camera.offset = {screenWidth/2.0f, screenHeight/2.0f };
     camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    camera.zoom = 0.2f;
     camera.target = {800,450};
     
+     float spinA = 90;
     bool turn = true;
+    
+    bool attackANM = false;
+    float timerATK = 0;
     
     typedef struct{
         Vector2 pos01 = {1300, 650};
@@ -92,16 +103,32 @@ int main(void)
         float EnergyWidth = 0;
         float StaminaWidth = 0;
         int UIWheel = 0;
-        Vector2 BarPos = {-100, 0};
+        Vector2 BarPos = {0, 0};
         Vector2 pos = {1300, 650};
-        bool menu = false;
+        int menu = 0;
         float UIBackW = 400;
     }UI;
     
     UI ui;
+    
+    PlayerIdleC.width *= PLAYERSCALE;
+    PlayerIdleC.height *= PLAYERSCALE;
+    PlayerAttackP.width *= PLAYERSCALE;
+    PlayerAttackP.height *= PLAYERSCALE;
+    PlayerAttackS.width *= PLAYERSCALE;
+    PlayerAttackS.height *= PLAYERSCALE;
+    
+    player.idle = {3, 4, PlayerIdleC.width, PlayerIdleC.height, "Idle", true, PlayerIdleC};
+    player.AttackP = {10, 23, PlayerAttackP.width, PlayerAttackP.height, "AttackPhysical", false, PlayerAttackP};
+    player.AttackS = {10, 19, PlayerAttackS.width, PlayerAttackS.height, "AttackSpecial", false, PlayerAttackS};
+    
+    player.changeAnimation("Idle");
+    
+    std::cout << "\n" <<player.currentAnimation.width << ", " << player.currentAnimation.height;
    
-    Vector2 BarPos = {-100, 0};
+    Vector2 BarPos = {0, 0};
     Vector2 pos = {1300, 650};
+    Vector2 PlayerTarget = {200, 400};
     
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -109,10 +136,14 @@ int main(void)
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
     
+    bool clicked = false;
+    
+    player.animation();
+    
       if(IsKeyPressed(KEY_LEFT)){
           newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
           zoomTarget = 1.2;
-          ui.BarPos = {-100, 0};
+          ui.BarPos = {0, 0};
           ui.pos = {1300, 650};
       }else if(IsKeyPressed(KEY_RIGHT)){
           zoomTarget = 1.5;
@@ -122,14 +153,38 @@ int main(void)
       }else if(IsKeyPressed(KEY_UP)){
           newTarget = {800,450};
           zoomTarget = 1;
-          ui.BarPos = {-100, 0};
+          ui.BarPos = {0, 0};
           ui.pos = {1300, 650};
       }
+      
+      if(attackANM){
+          if(timerATK >= 2){
+              timerATK = 0;
+              attackANM = false;
+          }else timerATK += GetFrameTime();
+          
+          PlayerTarget = {400, 0};
+          zoomTarget = 1.5;
+          ui.BarPos = {-100, -300};
+          ui.pos = {1300, 1100};
+          newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
+      }else{
+          PlayerTarget = {200, 400};
+          newTarget = {800,450};
+          zoomTarget = 1;
+          ui.BarPos = {0, 0};
+          ui.pos = {1300, 650};
+          
+      }
+      
+     
+      
       camera.target = {lerp(camera.target.x, newTarget.x, 0.03), lerp(camera.target.y, newTarget.y, 0.03)};
       
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
       
-     
+      player.position = Tween(player.position, PlayerTarget, 10
+      );
       
       if(IsKeyDown(KEY_BACKSPACE)){
          player.health -= 10;
@@ -197,14 +252,16 @@ int main(void)
                 
                 
                 //DrawRectangleLines(player.position.x, player.position.y, player.width, player.height, BLACK);
-                DrawTextureEx(PlayerSprite, player.position, 0, 6, WHITE);
+                //DrawTextureEx(player.textureBack, player.position, 0, 6, WHITE);
+                // DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint); 
+                DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
                 //DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
                 DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -150}), 0, 5, WHITE);
-                ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.05);  
+                ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.05);
                 //Draws the gray background for the bar when it gets depleted 
-                DrawRectangleRounded({900, -100, 500, 25}, 20, 20, GREEN);
+                DrawRectangle(900, -100, ui.HealthWidthE, 25, GREEN);
                 //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
-                DrawRectangleRounded({900, -100, ui.HealthWidthE, 25}, 20, 20, MAROON);
+                DrawRectangle(900, -100, ui.HealthWidthE, 25, MAROON);
                 //Draws the outline for the bar to make it look a little better
                 //DrawRectangleRoundedLines({900, -100, 600, 30}, 5, 5, 10, BLACK);
                  
@@ -213,196 +270,269 @@ int main(void)
                 
                 EndMode2D();
                 //UI elements past this point
-                //DrawRectangleRounded({-100, 0, 1200, 300}, 20, 20, CLEARBASE(BLACK, 100));
-                //DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);
-                
+
                 
                 
                 BarPos = lerpV(BarPos, ui.BarPos, 0.2);
                 
-                DrawRectangle(BarPos.x, BarPos.y, 1200, 225, CLEARBASE(BLACK, 75));
-                DrawRectangleLines(BarPos.x, BarPos.y, 1200, 225, CLEARBASE(BLACK, 100));
+
               
                 //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
-                ui.HealthWidth = lerp(ui.HealthWidth, lerp(0, 1000, player.health/player.maxHealth), 0.05);  
+                ui.HealthWidth = lerp(ui.HealthWidth, lerp(0, 648, player.health/player.maxHealth), 0.05);  
                 //Draws the outline for the bar to make it look a little better
                // DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 50, 1000, 25}, 20, 20, 10, BLUE);
                 //Draws the gray background for the bar when it gets depleted 
-                DrawRectangleRounded({BarPos.x + 150, BarPos.y + 50, 1000, 25}, 20, 20, GRAY);
+                DrawRectangle(BarPos.x + 20, BarPos.y + 40, 648, 25, GRAY);
                 
                 
                 //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
-                DrawRectangleRounded({BarPos.x + 150, BarPos.y + 50, ui.HealthWidth, 25}, 20, 20, GREEN);
+                DrawRectangle(BarPos.x + 20, BarPos.y + 40, ui.HealthWidth, 25, GREEN);
                 
                 
-                ui.EnergyWidth = lerp(ui.EnergyWidth, lerp(0, 1000, player.suit.battery/player.suit.maxBattery), 0.05);   
-                DrawRectangleRounded({BarPos.x + 150, BarPos.y + 100, 1000, 25}, 20, 20, GRAY);
-                DrawRectangleRounded({BarPos.x + 150, BarPos.y + 100, ui.EnergyWidth, 25}, 20, 20, BLUE);
-               //DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 100, 1000, 25}, 20, 20, 20, BLACK);
+                ui.EnergyWidth = lerp(ui.EnergyWidth, lerp(0, 620, player.suit.battery/player.suit.maxBattery), 0.05);   
+                DrawRectangle(BarPos.x + 20, BarPos.y + 120, 620, 25, GRAY);
+                DrawRectangle(BarPos.x + 20, BarPos.y + 120, ui.EnergyWidth, 25, BLUE);
                 
-                ui.StaminaWidth = lerp(ui.StaminaWidth, lerp(0, 1000, player.stamina/player.maxStamina), 0.05);   
-                DrawRectangleRounded({BarPos.x + 150, BarPos.y + 150, 1000, 25}, 20, 20, GRAY);
-                DrawRectangleRounded({BarPos.x + 150, BarPos.y + 150, ui.StaminaWidth, 25}, 20, 20, YELLOW);
-                //DrawRectangleRoundedLines({BarPos.x + 150, BarPos.y + 150, 1000, 25}, 20, 20, 2, BLACK);
+                ui.StaminaWidth = lerp(ui.StaminaWidth, lerp(0, 592, player.stamina/player.maxStamina), 0.05);   
+                DrawRectangle(BarPos.x + 20, BarPos.y + 200, 592, 25, GRAY);
+                DrawRectangle(BarPos.x + 20, BarPos.y + 200, ui.StaminaWidth, 25, YELLOW);
                 
-                //DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);  
+                //bar frame for the bars
+                DrawTextureEx(BarFrame , BarPos, 0, 8, WHITE);
                 
                 pos = lerpV(pos, ui.pos, 0.2);
                 
                //DrawRectangleRoundedLines({50, 100, 1000, 25}, 20, 20, 4, BLACK);
                 
-                Vector2 pos1 = pos;
+                Vector2 pos1 = pos; 
                 Vector2 pos2 = pos;
                 Vector2 pos3 = pos;
                 Vector2 pos4 = pos;
                 
                 Vector2 pos1temp = {pos.x - 10, pos.y};
-                Vector2 pos2temp = {pos.x + 10, pos.y};
+                Vector2 pos2temp = {pos.x + 10, pos.y};    
                 
-                if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos1, {pos1.x, pos1.y + 200}, {pos1.x + 200, pos1.y})){
-                    ui.UIWheel = 4;
-                }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos2, {pos2.x, pos2.y - 200}, {pos2.x + 200, pos2.y})){
-                    ui.UIWheel = 2;
-                }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos3, {pos3.x, pos3.y - 200}, {pos3.x - 200, pos3.y})){
-                    ui.UIWheel = 1;
-                }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos4, {pos4.x, pos4.y + 200}, {pos4.x - 200, pos4.y})){
-                    ui.UIWheel = 3;
-                }else{
-                    ui.UIWheel = 0;
+                 
+                  if(spinA > 0){
+                    spinA -= 130 * GetFrameTime();
+                  }else{
+                      spinA = 0;
+                  }
+                
+                
+                if(ui.menu == 0){
+                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos, {pos.x, pos.y + 200}, {pos.x + 200, pos.y})){
+                        ui.UIWheel = 4;
+                        if(IsMouseButtonPressed(0) && ui.UIWheel != 0 && !clicked){
+                            ui.menu = 4;
+                            clicked = true;
+                        }
+                    }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos, {pos.x, pos.y - 200}, {pos.x + 200, pos.y})){
+                        ui.UIWheel = 2;
+                        if(IsMouseButtonPressed(0) && ui.UIWheel != 0 && !clicked){
+                            ui.menu = 2;
+                            clicked = true;
+                        }
+                    }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos, {pos.x, pos.y - 200}, {pos.x - 200, pos.y})){
+                        ui.UIWheel = 1;
+                        if(IsMouseButtonPressed(0) && ui.UIWheel != 0 && !clicked){
+                            ui.menu = 1;
+                            clicked = true;
+                        }
+                    }else if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos, {pos.x, pos.y + 200}, {pos.x - 200, pos.y})){
+                        ui.UIWheel = 3;
+                        if(IsMouseButtonPressed(0) && ui.UIWheel != 0 && !clicked){
+                            ui.menu = 3;
+                            clicked = true;
+                        }
+                    }else{
+                        ui.UIWheel = 0;
+                    }
                 }
                 
-                
-                
+                /*
                 if(IsMouseButtonPressed(0) && ui.UIWheel != 0){
-                    ui.menu = true;
-                    ui.UIBackW = 400;
+                    ui.menu = 1;
                 }
-                
+                */
                 if(IsMouseButtonPressed(1)){
-                    ui.menu = false;
+                    ui.menu = 0;
                 }
         
                 
-                
-                
                 //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
-                if(!ui.menu){
+                switch(ui.menu){
                     
-                    switch(ui.UIWheel){
                     case 0:
-                        pos1 = pos;
-                        pos2 = pos;
-                        pos3 = pos;
-                        pos4 = pos;
-                        ui.rad1 = 200;
-                        ui.rad2 = 200;
-                        ui.rad3 = 200;
-                        ui.rad4 = 200;
-                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
-                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
-                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
-                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
-                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
-                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
-                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
-                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
+                        
+                        switch(ui.UIWheel){
+                        case 0:
+                            pos1 = pos;
+                            pos2 = pos;
+                            pos3 = pos;
+                            pos4 = pos;
+                            ui.rad1 = 200;
+                            ui.rad2 = 200;
+                            ui.rad3 = 200;
+                            ui.rad4 = 200;
+                            DrawCircleSectorLines(ui.pos01, ui.rad1, 0 + spinA, 90 + spinA, 50, YELLOW);                           
+                            DrawCircleSectorLines(ui.pos02, ui.rad2, 270 + spinA, 360 + spinA, 50, BLUE);                           
+                            DrawCircleSectorLines(ui.pos03, ui.rad3, 180 + spinA, 270 + spinA, 50, RED);                           
+                            DrawCircleSectorLines(ui.pos04, ui.rad4, 90 + spinA, 180 + spinA, 50, GREEN);
+                            DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
+                            DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                            DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                            DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                            break;
+                        
+                        case 1:
+                            pos3.x -= 40;
+                            pos3.y -= 40;
+                            ui.rad3 = 250;
+                            ui.rad4 = 200;
+                            ui.rad1 = 200;
+                            ui.rad2 = 200;
+                            DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                            DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                            DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                            DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                            DrawCircleSector(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                            DrawTextureEx(IconA , vectorAddition(ui.pos03, -200, -180), 0, 3, WHITE);
+                            DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, SEMICLEAR);
+                            DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                            DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
+                            break;
+                            
+                        case 2:
+                            pos2.x += 40;
+                            pos2.y -= 40;
+                            ui.rad2 = 250;
+                            ui.rad3 = 200;
+                            ui.rad4 = 200;
+                            ui.rad1 = 200;
+                            DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                            DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                            DrawCircleSector(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                            DrawTextureEx(IconB , vectorAddition(ui.pos02, 20, -160), 0, 2.5, BLUE);
+                            DrawTextureEx(IconB , vectorAddition(ui.pos02, -0, -140), 0, 2.5, SEMICLEAR);
+                            DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                            DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                            DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                            DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
+                            break;
+                            
+                        case 3:
+                            pos4.x -= 40;
+                            pos4.y += 40;
+                            ui.rad4 = 250;
+                            ui.rad1 = 200;
+                            ui.rad2 = 200;
+                            ui.rad3 = 200;
+                            DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                            DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
+                            DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                            DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                            DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                            DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                            DrawCircleSector(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                            DrawTextureEx(IconI , vectorAddition(ui.pos04, -230, -50), 0, 5, GREEN);
+                            DrawTextureEx(IconI , vectorAddition(ui.pos04, -210, -80), 0, 5, SEMICLEAR);
+                            break;
+                            
+                        case 4:
+                            pos1.x += 40;
+                            pos1.y += 40;
+                            ui.rad1 = 250;
+                            ui.rad2 = 200;
+                            ui.rad3 = 200;
+                            ui.rad4 = 200;
+                            
+                          
+                            DrawCircleSector(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
+                            DrawTextureEx(IconR , vectorAddition(ui.pos01, -50, -60), 0, 5, YELLOW);
+                            DrawTextureEx(IconR , vectorAddition(ui.pos01, -80, -80), 0, 5, SEMICLEAR);
+                            DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
+                            DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
+                            DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
+                            DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
+                            DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
+                            DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
+                            break;
+                            
+                            default:
+                            break;
+                        }
+                        
                         break;
-                    
+                        
+                    // sub menu attack
                     case 1:
-                        pos3.x -= 40;
-                        pos3.y -= 40;
-                        ui.rad3 = 250;
-                        ui.rad4 = 200;
-                        ui.rad1 = 200;
-                        ui.rad2 = 200;
-                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
-                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
-                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
-                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
-                        DrawCircleSector(ui.pos03, ui.rad3, 180, 270, 50, RED);
-                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, WHITE);
-                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
-                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
-                        break;
-                        
-                    case 2:
-                        pos2.x += 40;
-                        pos2.y -= 40;
-                        ui.rad2 = 250;
-                        ui.rad3 = 200;
-                        ui.rad4 = 200;
-                        ui.rad1 = 200;
-                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
-                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
-                        DrawCircleSector(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
-                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
-                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
-                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
-                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
-                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
-                        break;
-                        
-                    case 3:
-                        pos4.x -= 40;
-                        pos4.y += 40;
-                        ui.rad4 = 250;
-                        ui.rad1 = 200;
-                        ui.rad2 = 200;
-                        ui.rad3 = 200;
-                        DrawCircleSectorLines(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
-                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
-                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
-                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
-                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
-                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
-                        DrawCircleSector(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
-                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
-                        break;
-                        
-                    case 4:
-                        pos1.x += 40;
-                        pos1.y += 40;
-                        ui.rad1 = 250;
-                        ui.rad2 = 200;
-                        ui.rad3 = 200;
-                        ui.rad4 = 200;
-                        DrawCircleSector(ui.pos01, ui.rad1, 0, 90, 50, YELLOW);
-                        DrawTextureEx(IconR , vectorAddition(ui.pos01, -70, -80), 0, 5, YELLOW);
-                        DrawCircleSectorLines(ui.pos02, ui.rad2, 270, 360, 50, BLUE);
-                        DrawTextureEx(IconB , vectorAddition(ui.pos02, 0, -150), 0, 2.5, BLUE);
-                        DrawCircleSectorLines(ui.pos03, ui.rad3, 180, 270, 50, RED);
-                        DrawTextureEx(IconA , vectorAddition(ui.pos03, -180, -160), 0, 3, RED);
-                        DrawCircleSectorLines(ui.pos04, ui.rad4, 90, 180, 50, GREEN);
-                        DrawTextureEx(IconI , vectorAddition(ui.pos04, -200, -80), 0, 5, GREEN);
-                        break;
-                        
-                        default:
-                        break;
-                    }
-                    
-                }else{
                   
-                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
-                        pos1temp.x -= 40;
-                        DrawCircleSector(ui.posS1, 225, 90, 270, 50, BLUE);
-                        DrawTextureEx(IconAS , vectorAddition(ui.posS1, -140, -30), 0, 6, WHITE);
-                    }else{
-                        DrawCircleSectorLines(ui.posS1, 200, 90, 270, 50, BLUE);
-                        DrawTextureEx(IconAS , vectorAddition(ui.posS1, -110, -30), 0, 5.5, WHITE);
-                    }
-                    if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
-                        pos2temp.x += 40;
-                        DrawCircleSector(ui.posS2, 225, 450, 270, 50, RED);
-                        DrawTextureEx(IconAP , vectorAddition(ui.posS2, 60, -40), 0, 7, WHITE);
+                        if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
+                            pos1temp.x -= 40;
+                            DrawCircleSector(ui.posS1, 225, 90, 270, 50, BLUE);
+                            DrawTextureEx(IconAS , vectorAddition(ui.posS1, -140, -30), 0, 6, WHITE);
+                            if(IsMouseButtonPressed(0) && !clicked){
+                                ui.menu = 0;
+                                clicked = true;
+                                turn = false;
+                                enemy.health -= enemy.damageCalc(0, player.specialDamageOut());
+                                player.changeAnimation("Special");
+                                attackANM = true;
+                            }
+                        }else{
+                            DrawCircleSectorLines(ui.posS1, 200, 90, 270, 50, BLUE);
+                            DrawTextureEx(IconAS , vectorAddition(ui.posS1, -110, -30), 0, 5.5, WHITE);
+                        }
+                        if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
+                            pos2temp.x += 40;
+                            DrawCircleSector(ui.posS2, 225, 450, 270, 50, RED);
+                            DrawTextureEx(IconAP , vectorAddition(ui.posS2, 60, -40), 0, 7, WHITE);
+                            if(IsMouseButtonPressed(0) && !clicked){
+                                ui.menu = 0;
+                                turn = false;
+                                clicked = true;
+                                enemy.health -= enemy.damageCalc(1, player.physicalDamageOut());
+                                player.changeAnimation("Physical");
+                                attackANM = true;
+                            }
 
-                    }else{
-                        DrawCircleSectorLines(ui.posS2, 200, 450, 270, 50, RED);
-                        DrawTextureEx(IconAP , vectorAddition(ui.posS2, 40, -40), 0, 6, WHITE);
-                    }
+                        }else{
+                            DrawCircleSectorLines(ui.posS2, 200, 450, 270, 50, RED);
+                            DrawTextureEx(IconAP , vectorAddition(ui.posS2, 40, -40), 0, 6, WHITE);
+                        }
+                        
+                        break;
+                        
+                      //sub menu block  
+                      case 2:
+                        
+                            if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x - 200, pos1temp.y + 200}, {pos1temp.x - 200, pos1temp.y - 200}, pos1temp)){
+                                pos1temp.x -= 40;
+                                DrawCircleSector(ui.posS1, 225, 90, 270, 50, BLUE);
+                                DrawTextureEx(BlockS , vectorAddition(ui.posS1, -180, -50), 0, 4.5, WHITE);
+                            }else{
+                                DrawCircleSectorLines(ui.posS1, 200, 90, 270, 50, BLUE);
+                                DrawTextureEx(BlockS , vectorAddition(ui.posS1, -140, -50), 0, 4, WHITE);
+                            }
+                            if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, {pos1temp.x + 200, pos1temp.y + 200}, {pos1temp.x + 200, pos1temp.y - 200}, pos1temp)){
+                                pos2temp.x += 40;
+                                DrawCircleSector(ui.posS2, 225, 450, 270, 50, RED);
+                                DrawTextureEx(BlockP , vectorAddition(ui.posS2, 50, -70), 0, 5, WHITE);
+
+                            }else{
+                                DrawCircleSectorLines(ui.posS2, 200, 450, 270, 50, RED);
+                                DrawTextureEx(BlockP , vectorAddition(ui.posS2, 20, -70), 0, 4.5, WHITE);
+                            }
+                        
+                            break;
                     
+                    default:
+                        break;
                     
-                    
-                }
+                }   
+                  
+                
                 
                 ui.posS1 = lerpV(ui.posS1, pos1temp , 0.3);
                 ui.posS2 = lerpV(ui.posS2, pos2temp, 0.3);
@@ -411,8 +541,6 @@ int main(void)
                 ui.pos02 = lerpV(ui.pos02, pos2, 0.3);
                 ui.pos03 = lerpV(ui.pos03, pos3, 0.3);
                 ui.pos04 = lerpV(ui.pos04, pos4, 0.3);
-                
-
                 
         //ends the drawing phase of the program     
         EndDrawing();
