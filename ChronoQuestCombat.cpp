@@ -30,7 +30,7 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 //(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
-Player player(200, 400, {200, 400}, "Player", 1, 50, {10,10,10,10,10,10,10}, {5,5,100,100,100,100});
+Player player(200, 400, {200, 400}, "Player", 1, 50, {100,100,10,10,10,10,10}, {100,100,100,100,100,100});
 //Enemy(int width, int height, Vector2 position, std::string name, float maxHealth, int level, float maxStamina, float maxEnergy, Stats stats)
 Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, 100, 100,{5,5,5,5,5});
 
@@ -82,6 +82,7 @@ int main(void)
     bool turn = true;
     
     bool attackANM = false;
+    bool enemyView = false;
     float timerATK = 0;
     
     typedef struct{
@@ -129,6 +130,7 @@ int main(void)
     Vector2 BarPos = {0, 0};
     Vector2 pos = {1300, 650};
     Vector2 PlayerTarget = {200, 400};
+    int attackType = 0;
     
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -158,10 +160,24 @@ int main(void)
       }
       
       if(attackANM){
-          if(timerATK >= 2){
+          
+          if(timerATK >= 2){  
               timerATK = 0;
               attackANM = false;
-          }else timerATK += GetFrameTime();
+              switch(attackType){
+                  case 1:
+                    enemy.health -= enemy.damageCalc(0, player.specialDamageOut());
+                    break;
+                  case 2:
+                    enemy.health -= enemy.damageCalc(1, player.physicalDamageOut());
+                    break;
+                  default:
+                    enemy.health -= 10;
+              }
+              attackType = 0;
+          }else{
+              
+          } timerATK += GetFrameTime();
           
           PlayerTarget = {400, 0};
           zoomTarget = 1.5;
@@ -169,12 +185,18 @@ int main(void)
           ui.pos = {1300, 1100};
           newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
       }else{
-          PlayerTarget = {200, 400};
-          newTarget = {800,450};
-          zoomTarget = 1;
-          ui.BarPos = {0, 0};
-          ui.pos = {1300, 650};
-          
+          if(!enemyView){
+              PlayerTarget = {200, 400};
+              newTarget = {800,450};
+              zoomTarget = 1;
+              ui.BarPos = {0, 0};
+              ui.pos = {1300, 650};
+          }else{
+              zoomTarget = 1.5;
+              ui.BarPos = {-100, -300};
+              ui.pos = {1300, 1100};
+              newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
+          }
       }
       
      
@@ -255,9 +277,9 @@ int main(void)
                 //DrawTextureEx(player.textureBack, player.position, 0, 6, WHITE);
                 // DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint); 
                 DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
-                //DrawRectangle(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
-                DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -150}), 0, 5, WHITE);
-                ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.05);
+                //DrawRectangleLines(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
+                DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, WHITE);
+                ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.2);
                 //Draws the gray background for the bar when it gets depleted 
                 DrawRectangle(900, -100, ui.HealthWidthE, 25, GREEN);
                 //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
@@ -275,6 +297,13 @@ int main(void)
                 
                 BarPos = lerpV(BarPos, ui.BarPos, 0.2);
                 
+                if(IsMouseButtonPressed(0) && CheckCollisionPointRec({GetMouseX(), GetMouseY()}, {enemy.position.x, enemy.position.y, enemy.width, enemy.height})){
+                    enemyView = true;
+                }
+                
+                if(IsMouseButtonPressed(1)){
+                    enemyView = false;
+                }
 
               
                 //linear interpolates the 'HealthWidth' variable, starting at its current value interpolatated towards the value of the players health scaled to the max width of the bar (1000) by a factor of 0.05 every frame to create a smooth gliding motion.
@@ -476,7 +505,7 @@ int main(void)
                                 ui.menu = 0;
                                 clicked = true;
                                 turn = false;
-                                enemy.health -= enemy.damageCalc(0, player.specialDamageOut());
+                                attackType = 1;
                                 player.changeAnimation("Special");
                                 attackANM = true;
                             }
@@ -492,7 +521,7 @@ int main(void)
                                 ui.menu = 0;
                                 turn = false;
                                 clicked = true;
-                                enemy.health -= enemy.damageCalc(1, player.physicalDamageOut());
+                                attackType = 2;
                                 player.changeAnimation("Physical");
                                 attackANM = true;
                             }
