@@ -29,10 +29,10 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-//(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit, SuitStats suitStats)
-Player player(200, 400, {200, 400}, "Player", 1, 50, {100,100,10,10,10,10,10}, {100,100,100,100,100,100});
+//Player(int width, int height, Vector2 position, std::string name, int rank, int expRankUp, Stats stats, Suit suit)
+Player player(200, 400, {200, 400}, "Player", 3, 50, {100,100,10,10,10,10,10}, {10,10,10,10,100,100});
 //Enemy(int width, int height, Vector2 position, std::string name, float maxHealth, int level, float maxStamina, float maxEnergy, Stats stats)
-Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 2, 100, 100,{5,5,5,5,5});
+Enemy enemy(150, 300, {1100, 100}, "Enemy01", 100, 5, 100, 100,{5,5,5,5,5});
 
 
 
@@ -57,6 +57,7 @@ int main(void)
     Texture2D PlayerAttackP = LoadTexture("Assests/Player/PlayerAttackPhysical.png");
     Texture2D PlayerAttackS = LoadTexture("Assests/Player/PlayerAttackSpecial.png");
     
+    Texture2D Background = LoadTexture("Assests/UI/BackgroundBattle.png");
     Texture2D BarFrame = LoadTexture("Assests/UI/BarFrame.png");
     Texture2D IconA = LoadTexture("Assests/UI/Attack Icon.png");
     Texture2D IconAS = LoadTexture("Assests/UI/AttackSIcon.png");
@@ -84,6 +85,19 @@ int main(void)
     bool attackANM = false;
     bool enemyView = false;
     float timerATK = 0;
+    float timerflick = 0;
+    int flickcount = 0;
+    int flicktotal = 5;
+    int flick = 0;
+    
+    float timerflickP = 0;
+    int flickcountP = 0;
+    int flicktotalP = 5;
+    int flickP = 0;
+    
+    float enemyWaitTimer = 0;
+    float enemyAttackTimer = 0;
+    
     
     typedef struct{
         Vector2 pos01 = {1300, 650};
@@ -112,6 +126,9 @@ int main(void)
     
     UI ui;
     
+    Background.width *= 15;
+    Background.height *= 15;
+    
     PlayerIdleC.width *= PLAYERSCALE;
     PlayerIdleC.height *= PLAYERSCALE;
     PlayerAttackP.width *= PLAYERSCALE;
@@ -130,6 +147,7 @@ int main(void)
     Vector2 BarPos = {0, 0};
     Vector2 pos = {1300, 650};
     Vector2 PlayerTarget = {200, 400};
+    Vector2 EnemyTarget = {1100, 100};
     int attackType = 0;
     
     SetTargetFPS(60);
@@ -159,9 +177,12 @@ int main(void)
           ui.pos = {1300, 650};
       }
       
+      
+      
       if(attackANM){
           
           if(timerATK >= 2){  
+              flick = 1;
               timerATK = 0;
               attackANM = false;
               switch(attackType){
@@ -174,6 +195,9 @@ int main(void)
                   default:
                     enemy.health -= 10;
               }
+             
+              turn = false;
+              enemyWaitTimer = 0.1;
               attackType = 0;
           }else{
               
@@ -185,18 +209,50 @@ int main(void)
           ui.pos = {1300, 1100};
           newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
       }else{
-          if(!enemyView){
+          if(EnemyTarget.x == 500 && EnemyTarget.y == 300){
+             
+              newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
+              zoomTarget = 1.2;
+          }else if(!enemyView){
               PlayerTarget = {200, 400};
               newTarget = {800,450};
               zoomTarget = 1;
               ui.BarPos = {0, 0};
               ui.pos = {1300, 650};
+              
           }else{
               zoomTarget = 1.5;
               ui.BarPos = {-100, -300};
               ui.pos = {1300, 1100};
               newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
           }
+      }
+      if(!turn) ui.pos = {1300, 1100};
+      
+      if(!turn){
+          if(enemyAttackTimer >= 1.2){
+              enemyAttackTimer = 0;
+              turn = true;
+              EnemyTarget = {1100, 100};
+              int temp = (int)GetRandomValue(0,1);
+              player.health -= player.damageCalc(temp, enemy.returnDamage(temp));
+              flickP = 1;
+              player.block = false;
+          }else if(enemyAttackTimer > 0.1){
+              enemyAttackTimer += GetFrameTime();
+          }
+          
+          if(enemyWaitTimer >= 1.5){
+              enemyWaitTimer = 0;
+              EnemyTarget = {500, 300};
+              newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
+              zoomTarget = 1.2;
+              enemyAttackTimer = 0.1;
+          }else if(enemyWaitTimer > 0.1){
+              enemyWaitTimer += GetFrameTime();
+          }
+      }else{
+        EnemyTarget = {1100,100};
       }
       
      
@@ -205,8 +261,8 @@ int main(void)
       
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
       
-      player.position = Tween(player.position, PlayerTarget, 10
-      );
+      player.position = Tween(player.position, PlayerTarget, 10);
+      enemy.position = Tween(enemy.position, EnemyTarget, 10);
       
       if(IsKeyDown(KEY_BACKSPACE)){
          player.health -= 10;
@@ -271,17 +327,82 @@ int main(void)
                 BeginMode2D(camera);
                 
                 ClearBackground(WHITE);
-                
+                DrawTextureEx(Background, {-300, -300}, 0, 1, WHITE);
                 
                 //DrawRectangleLines(player.position.x, player.position.y, player.width, player.height, BLACK);
                 //DrawTextureEx(player.textureBack, player.position, 0, 6, WHITE);
                 // DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint); 
-                DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
+
+                //DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
                 //DrawRectangleLines(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
-                DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, WHITE);
+                
+                
+                if(flick != 0){
+                    if(timerflick > 0.1){
+                        timerflick = 0;
+                        if(flick == 1){
+                          flick = 2;
+                          flickcount++;
+                        } 
+                        else flick = 1;
+                       
+                        if(flickcount >= flicktotal){
+                          flick = 0;
+                           flickcount = 0;                          
+                        } 
+                    }else{
+                        timerflick += GetFrameTime();
+                    }
+                }
+                
+                switch(flick){
+                    case 0:
+                        DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, WHITE);
+                        break;
+                    case 1:
+                         DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, WHITE);
+                        break;
+                    case 2:
+                         DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, SEMICLEAR);
+                        break;
+                }
+                 if(player.block){
+                    DrawRectangle(400, 425, 500, 500, BLUE);
+                }
+                 if(flickP != 0){
+                    if(timerflickP > 0.1){
+                        timerflickP = 0;
+                        if(flickP == 1){
+                          flickP = 2;
+                          flickcountP++;
+                        } 
+                        else flickP = 1;
+                       
+                        if(flickcountP >= flicktotalP){
+                          flickP = 0;
+                          flickcountP = 0;                          
+                        } 
+                    }else{
+                        timerflickP += GetFrameTime();
+                    }
+                }
+                
+                switch(flickP){
+                    case 0:
+                        DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
+                        break;
+                    case 1:
+                         DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
+                        break;
+                    case 2:
+                         DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, SEMICLEAR);
+                        break;
+                }
+                
+                
                 ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.2);
                 //Draws the gray background for the bar when it gets depleted 
-                DrawRectangle(900, -100, ui.HealthWidthE, 25, GREEN);
+                DrawRectangle(900, -100, 500, 25, GRAY);
                 //Draws the actual health bar with a width of the value 'HealthWidth' as declared previously.
                 DrawRectangle(900, -100, ui.HealthWidthE, 25, MAROON);
                 //Draws the outline for the bar to make it look a little better
@@ -501,10 +622,13 @@ int main(void)
                             pos1temp.x -= 40;
                             DrawCircleSector(ui.posS1, 225, 90, 270, 50, BLUE);
                             DrawTextureEx(IconAS , vectorAddition(ui.posS1, -140, -30), 0, 6, WHITE);
-                            if(IsMouseButtonPressed(0) && !clicked){
+                            if(IsMouseButtonPressed(0) && !clicked && player.suit.battery >= 15 && player.stamina >= 5){
+                                player.stamina -= 5;
+                                player.suit.battery -= 15;
+                                if(player.stamina < 0) player.stamina = 0;
+                                if(player.suit.battery < 0) player.suit.battery = 0;
                                 ui.menu = 0;
                                 clicked = true;
-                                turn = false;
                                 attackType = 1;
                                 player.changeAnimation("Special");
                                 attackANM = true;
@@ -517,9 +641,12 @@ int main(void)
                             pos2temp.x += 40;
                             DrawCircleSector(ui.posS2, 225, 450, 270, 50, RED);
                             DrawTextureEx(IconAP , vectorAddition(ui.posS2, 60, -40), 0, 7, WHITE);
-                            if(IsMouseButtonPressed(0) && !clicked){
+                            if(IsMouseButtonPressed(0) && !clicked && player.stamina >= 15 && player.suit.battery >= 5){
+                                player.stamina -= 15;
+                                player.suit.battery -= 5;
+                                if(player.stamina < 0) player.stamina = 0;
+                                if(player.suit.battery < 0) player.suit.battery = 0;
                                 ui.menu = 0;
-                                turn = false;
                                 clicked = true;
                                 attackType = 2;
                                 player.changeAnimation("Physical");
@@ -540,6 +667,18 @@ int main(void)
                                 pos1temp.x -= 40;
                                 DrawCircleSector(ui.posS1, 225, 90, 270, 50, BLUE);
                                 DrawTextureEx(BlockS , vectorAddition(ui.posS1, -180, -50), 0, 4.5, WHITE);
+                                if(IsMouseButtonPressed(0) && !clicked){
+                                    player.stamina += player.maxStamina/4;
+                                    player.suit.battery += player.suit.maxBattery/2;
+                                    if(player.stamina > player.maxStamina) player.stamina = player.maxStamina;
+                                    if(player.suit.battery > player.suit.maxBattery) player.suit.battery = player.suit.maxBattery;
+                                    ui.menu = 0;
+                                    clicked = true;
+                                    player.block = true;
+                                    player.blockT = 0;
+                                    enemyWaitTimer = 0.1;
+                                    turn = false;
+                                }
                             }else{
                                 DrawCircleSectorLines(ui.posS1, 200, 90, 270, 50, BLUE);
                                 DrawTextureEx(BlockS , vectorAddition(ui.posS1, -140, -50), 0, 4, WHITE);
@@ -548,7 +687,19 @@ int main(void)
                                 pos2temp.x += 40;
                                 DrawCircleSector(ui.posS2, 225, 450, 270, 50, RED);
                                 DrawTextureEx(BlockP , vectorAddition(ui.posS2, 50, -70), 0, 5, WHITE);
-
+                                if(IsMouseButtonPressed(0) && !clicked){
+                                    player.stamina += player.maxStamina/2;
+                                    player.suit.battery += player.suit.maxBattery/4;
+                                    if(player.stamina > player.maxStamina) player.stamina = player.maxStamina;
+                                    if(player.suit.battery > player.suit.maxBattery) player.suit.battery = player.suit.maxBattery;
+                                    clicked = true;
+                                    ui.menu = 0;
+                                    clicked = true;
+                                    player.block = true;
+                                    player.blockT = 1;
+                                    enemyWaitTimer = 0.1;
+                                    turn = false;
+                                }
                             }else{
                                 DrawCircleSectorLines(ui.posS2, 200, 450, 270, 50, RED);
                                 DrawTextureEx(BlockP , vectorAddition(ui.posS2, 20, -70), 0, 4.5, WHITE);

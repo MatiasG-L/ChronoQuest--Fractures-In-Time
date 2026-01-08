@@ -1,5 +1,5 @@
-# include "raylib.h" 
-
+#include "raylib.h" 
+#include <iostream>
 class Player{
     public:
     Texture2D textureBack;
@@ -15,6 +15,8 @@ class Player{
     float maxStamina = 100;
     int exp;
     int expRankUp;
+    int blockT = 0;
+    bool block = false;
     
     int frameCounter = 0; 
     int frameSpeed = 4; //(fps)
@@ -41,8 +43,8 @@ class Player{
         int defence;
         float shieldMax;
         float shieldHealth;
-        int battery;
-        int maxBattery;
+        float battery;
+        float maxBattery;
     }Suit;
     
     Suit suit;
@@ -83,14 +85,21 @@ class Player{
     }
     
     float damageCalc(int type, float incoming){
-        
-        if(GetRandomValue(0,100) <= 8){
-            return incoming;
+        float randomNum = GetRandomValue(0,100); 
+        std::cout << "\n" << randomNum << "\n";
+
+        if(randomNum <= 8){
+             std::cout << "CRIT! @ " << randomNum << "\n";
+            return incoming *1.7;
         }else{
             switch(type){
                 case 0:
+                    if(blockT == 0 && block) incoming /= 4;
+                    else if(blockT == 1 && block) incoming -= incoming/4;
                     return incoming - ((((stats.specialDefence + suit.defence)/2)/100) * (incoming * 0.75f));
                 case 1:
+                    if(blockT == 1 && block) incoming /= 4;
+                    else if(blockT == 0 && block) incoming -= incoming/4;
                     return incoming - ((((stats.defence + suit.defence)/2)/100) * (incoming * 0.75f));
                 default:
                     return -1;

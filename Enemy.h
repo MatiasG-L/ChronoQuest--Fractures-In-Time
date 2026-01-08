@@ -1,5 +1,5 @@
 #include "raylib.h"
-
+#include <iostream>
 class Enemy{
     public:
     Texture2D spriteFront;
@@ -41,6 +41,17 @@ class Enemy{
         energy = maxEnergy;
     } 
     
+    
+    float returnDamage(int type){
+        switch(type){
+            case 0: 
+                return stats.specialAtk + ((stats.specialAtk * (level/100)) * 2) * (energy / maxEnergy);
+                break;
+            case 1:
+                return stats.physicalAtk + ((stats.physicalAtk * (level/100)) * 2) * (stamina / maxStamina);
+                break;
+        }
+    }
     float physicalDamageOut(){
         return stats.physicalAtk + ((stats.physicalAtk * (level/100)) * 2) * (stamina / maxStamina);
     }
@@ -50,8 +61,11 @@ class Enemy{
     }
     
     float damageCalc(int type, float incoming){
-        if(GetRandomValue(0,100) <= 8){
-            return incoming;
+        float randomNum = GetRandomValue(0,100); 
+        std::cout << "\n" << randomNum << "\n";
+        if(randomNum <=8){
+            std::cout << "CRIT! @ " << randomNum << "\n";
+            return incoming *1.7;
         }else{
             switch(type){
                 case 0:
@@ -63,5 +77,7 @@ class Enemy{
             }
         }
     }
+    
+    
     
 };
