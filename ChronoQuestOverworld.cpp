@@ -59,7 +59,8 @@ int main(void){
     bool dragging = false;
     bool resizing = false;
     bool editor = false;
-    
+    int index = -1;
+
     // Initialization
     //--------------------------------------------------------------------------------------
     //creating variables to set the screen dimentions to
@@ -92,7 +93,6 @@ int main(void){
         
         camera.target = lerpV(camera.target, {vro.position.x + vro.width / 2, vro.position.y + vro.height / 2}, 0.2);
        
-        
         
         if (IsKeyPressed(KEY_R)){
             editor = !editor;
@@ -171,10 +171,27 @@ int main(void){
                     else DrawRectangle(walls[i].position.x,walls[i].position.y,walls[i].width, walls[i].height,walls[i].sqrColor);
                 }
                 
-                for(int i = 0; i < npcs.size(); i++){
-                    DrawRectangle(npcs.at(i).position.x, npcs.at(i).position.y, npcs.at(i).width, npcs.at(i).height, RED);
-                }
+                if (editor){
+                    for (int i = 0; i < walls.size(); i++){
+                        DrawRectangleRec({walls.at(i).position.x + walls.at(i).width, walls.at(i).position.y + walls.at(i).height, 20, 20}, GREEN);
+                        if (CheckCollisionPointRec({GetMouseX(), GetMouseY()}, {walls.at(i).position.x + walls.at(i).width, walls.at(i).position.y + walls.at(i).height,20,20})){
+                            resizing = true;
+                            index = i;
+                            return 0;
+                        }
+                    }
+                    if (resizing){
+                        walls[index].width += GetMouseDelta().x;
+                        walls[index].height += GetMouseDelta().y;
+                    }
+                    
+                    if(IsMouseButtonReleased(0)){
+                        resizing = false;
+                        index = -1;
+                    }
                 
+                }
+        
 
                 
                 EndMode2D();
