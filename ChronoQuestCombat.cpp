@@ -53,6 +53,7 @@ int main(void)
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     
+    //loading textures from the files
     Texture2D PlayerIdleC = LoadTexture("Assests/Player/PlayerIdleCombat.png");
     Texture2D PlayerAttackP = LoadTexture("Assests/Player/PlayerAttackPhysical.png");
     Texture2D PlayerAttackS = LoadTexture("Assests/Player/PlayerAttackSpecial.png");
@@ -70,76 +71,86 @@ int main(void)
     Texture2D PlayerSprite = LoadTexture("Assests/Player/pixilart-sprite.png");
     Texture2D EnemySprite = LoadTexture("Assests/Enemy/enemy0.png");
     
+    //creates and intializes two variables for the cameras target and its zoom target
     Vector2 newTarget = {800,450};
     float zoomTarget = 1;
     //initializes camera values
     Camera2D camera = { 0 };
     camera.offset = {screenWidth/2.0f, screenHeight/2.0f };
     camera.rotation = 0.0f;
-    camera.zoom = 0.2f;
+    camera.zoom = 1;
     camera.target = {800,450};
     
-     float spinA = 90;
+    //variable for spin angle on the menu
+    float spinA = 90;
+    //variable to set whether the menu should be spinning
     bool turn = true;
-    
+    //these two varible primarily handle when the camera should focus on what as well as other events dealing with gameplay
     bool attackANM = false;
     bool enemyView = false;
+    //timer to pace attack events
     float timerATK = 0;
+    //flick variables are for the flickering effect of the player and enemy when harmed by an attack (variables ening in 'P' is for the player)
     float timerflick = 0;
     int flickcount = 0;
     int flicktotal = 5;
-    int flick = 0;
-    
+    int flick = 0; 
     float timerflickP = 0;
     int flickcountP = 0;
     int flicktotalP = 5;
     int flickP = 0;
-    
+    //timers to pace the enemies flow of events on attack
     float enemyWaitTimer = 0;
     float enemyAttackTimer = 0;
     
-    
+    // creation of a structer of varibles used for the ui unifed under the name "ui"
     typedef struct{
+        //vectors for the positons of the 4 buttons on the menu
         Vector2 pos01 = {1300, 650};
         Vector2 pos02 = {1300, 650};
         Vector2 pos03 = {1300, 650};
         Vector2 pos04 = {1300, 650};
         
+        //positions for the two big buttons under the attack and block submenus
         Vector2 posS1 = {1300, 650};
         Vector2 posS2 = {1300, 650};
         
+        //radius for the ui buttons
         int rad1 = 200;
         int rad2 = 200;
         int rad3 = 200;
         int rad4 = 200;
-        
+        //variables for the bars displyed on screen
         float HealthWidth = 0;
         float HealthWidthE = 0;
         float EnergyWidth = 0;
         float StaminaWidth = 0;
+        //integer representing UI wheel state used in a big Switch statement 
         int UIWheel = 0;
+        //positon of the bars and radial menu 
         Vector2 BarPos = {0, 0};
         Vector2 pos = {1300, 650};
+        //integer representing UI state used in a big Switch statement 
         int menu = 0;
-        float UIBackW = 400;
     }UI;
-    
+    //creates an instance of the structure
     UI ui;
-    
+    //scales up the backgrounds width and height
     Background.width *= 15;
     Background.height *= 15;
     
+    //scales up the textures for the players amimations by the macro defined PLAYERSCALE
     PlayerIdleC.width *= PLAYERSCALE;
     PlayerIdleC.height *= PLAYERSCALE;
     PlayerAttackP.width *= PLAYERSCALE;
     PlayerAttackP.height *= PLAYERSCALE;
     PlayerAttackS.width *= PLAYERSCALE;
     PlayerAttackS.height *= PLAYERSCALE;
-    
+    //sets up the animations
     player.idle = {3, 4, PlayerIdleC.width, PlayerIdleC.height, "Idle", true, PlayerIdleC};
     player.AttackP = {10, 23, PlayerAttackP.width, PlayerAttackP.height, "AttackPhysical", false, PlayerAttackP};
     player.AttackS = {10, 19, PlayerAttackS.width, PlayerAttackS.height, "AttackSpecial", false, PlayerAttackS};
-    
+    //starts the animation of with idle
     player.changeAnimation("Idle");
     
     std::cout << "\n" <<player.currentAnimation.width << ", " << player.currentAnimation.height;
@@ -155,36 +166,19 @@ int main(void)
     
     
     while (!WindowShouldClose()){    // Detect window close button or ESC key
-    
+    //used for ui clicking to ensure one click isnt counted more than once a frame
     bool clicked = false;
-    
+    //refreshes the players texture with the new frame
     player.animation();
     
-      if(IsKeyPressed(KEY_LEFT)){
-          newTarget = {player.position.x + player.width/2 + 120, player.position.y + player.height/2 -70};
-          zoomTarget = 1.2;
-          ui.BarPos = {0, 0};
-          ui.pos = {1300, 650};
-      }else if(IsKeyPressed(KEY_RIGHT)){
-          zoomTarget = 1.5;
-          ui.BarPos = {-100, -300};
-          ui.pos = {1300, 1100};
-          newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
-      }else if(IsKeyPressed(KEY_UP)){
-          newTarget = {800,450};
-          zoomTarget = 1;
-          ui.BarPos = {0, 0};
-          ui.pos = {1300, 650};
-      }
-      
-      
-      
+      //if the player attacks then this code runs
       if(attackANM){
-          
+          //creates a timer for the player so that he has can run through his events ovetime not instantly
           if(timerATK >= 2){  
               flick = 1;
               timerATK = 0;
               attackANM = false;
+              //depending on the attack type the enemy is damaged using a different type
               switch(attackType){
                   case 1:
                     enemy.health -= enemy.damageCalc(0, player.specialDamageOut());
@@ -195,19 +189,20 @@ int main(void)
                   default:
                     enemy.health -= 10;
               }
-             
+              //sets up for the enemies turn
               turn = false;
               enemyWaitTimer = 0.1;
               attackType = 0;
           }else{
-              
+            //if the timer isnt up to the target time add to it 
           } timerATK += GetFrameTime();
-          
+          //move ui elements off screen to avoid clutering the screen
           PlayerTarget = {400, 0};
           zoomTarget = 1.5;
           ui.BarPos = {-100, -300};
           ui.pos = {1300, 1100};
           newTarget = {enemy.position.x + enemy.width/2, enemy.position.y + enemy.height/2 -100};
+      //the else statement delegates how the camera should focus depending on the different states
       }else{
           if(EnemyTarget.x == 500 && EnemyTarget.y == 300){
              
@@ -228,7 +223,7 @@ int main(void)
           }
       }
       if(!turn) ui.pos = {1300, 1100};
-      
+      //similar to the players version this is for the enemies attack cycle
       if(!turn){
           if(enemyAttackTimer >= 1.2){
               enemyAttackTimer = 0;
@@ -256,87 +251,28 @@ int main(void)
       }
       
      
-      
+      //linear interpolate the camera to its target so its movement is smooth and not sudden
       camera.target = {lerp(camera.target.x, newTarget.x, 0.03), lerp(camera.target.y, newTarget.y, 0.03)};
-      
+      //linear interpolate the camera to its target zoom level so its movement is smooth and not sudden
       camera.zoom = lerp(camera.zoom, zoomTarget, 0.03);
-      
+      //tween the player and enemy position to their  target to move them overtime and smoothly
       player.position = Tween(player.position, PlayerTarget, 10);
       enemy.position = Tween(enemy.position, EnemyTarget, 10);
-      
-      if(IsKeyDown(KEY_BACKSPACE)){
-         player.health -= 10;
-      }
-      if(IsKeyDown(KEY_L)){
-         player.health += 10;
-      }
-      
-      if(IsKeyDown(KEY_T)){
-         player.suit.battery -= 10;
-      }
-      if(IsKeyDown(KEY_Y)){
-         player.suit.battery += 10;
-      }
-      if(IsKeyDown(KEY_G)){
-         player.stamina -= 10;
-      }
-      if(IsKeyDown(KEY_H)){
-         player.stamina += 10;
-      }
-      
-      
-      if(IsKeyPressed(KEY_ONE)){
-          if(ui.UIWheel == 3){
-              ui.UIWheel = 0;
-          }else{
-              ui.UIWheel = 3;
-          }
-      }
-      if(IsKeyPressed(KEY_TWO)){
-          if(ui.UIWheel == 1){
-              ui.UIWheel = 0;
-          }else{
-              ui.UIWheel = 1;
-          }
-      }
-      if(IsKeyPressed(KEY_THREE)){
-          if(ui.UIWheel == 4){
-              ui.UIWheel = 0;
-          }else{
-              ui.UIWheel = 4;
-          }
-      }if(IsKeyPressed(KEY_FOUR)){
-          if(ui.UIWheel == 2){
-             ui.UIWheel = 0;
-          }else{
-              ui.UIWheel = 2;
-          }
-      }
-      
-      
-      
-      
+
       // Draw, where the scene actually gets rendered and drawn out
         
 
         BeginDrawing();
             
-            
+         
             
             //anything drawn inside of the BeginMode2D() and EndMode2D() are going to be drawn onto the world and wont move with the camera but anything drawn after EndMode2D() is drawn onto the screen and moves with the camera useful for UI
                 BeginMode2D(camera);
-                
+                //clears the screen every frame the draws the background as a base
                 ClearBackground(WHITE);
                 DrawTextureEx(Background, {-300, -300}, 0, 1, WHITE);
-                
-                //DrawRectangleLines(player.position.x, player.position.y, player.width, player.height, BLACK);
-                //DrawTextureEx(player.textureBack, player.position, 0, 6, WHITE);
-                // DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint); 
-
-                //DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
-                //DrawRectangleLines(enemy.position.x, enemy.position.y, enemy.width, enemy.height, MAROON);
-                
-                
+       
+                //flick timer for when the enemy gets hit to make the flickering effect
                 if(flick != 0){
                     if(timerflick > 0.1){
                         timerflick = 0;
@@ -354,7 +290,7 @@ int main(void)
                         timerflick += GetFrameTime();
                     }
                 }
-                
+                //draws the enemy differently depending on the state of the flick animation 
                 switch(flick){
                     case 0:
                         DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, WHITE);
@@ -366,9 +302,11 @@ int main(void)
                          DrawTextureEx(EnemySprite, vectorAddition(enemy.position, {-300, -100}), 0, 5, SEMICLEAR);
                         break;
                 }
+                //draws the shield for when the player blocks
                  if(player.block){
                     DrawRectangle(400, 425, 500, 500, BLUE);
                 }
+                //flick timer for when the player gets hit to make the flickering effect
                  if(flickP != 0){
                     if(timerflickP > 0.1){
                         timerflickP = 0;
@@ -386,7 +324,7 @@ int main(void)
                         timerflickP += GetFrameTime();
                     }
                 }
-                
+                //draws the player differently depending on the state of the flick animation 
                 switch(flickP){
                     case 0:
                         DrawTextureRec(player.textureBack, {player.animRec.x, 0, 64 * PLAYERSCALE, 64 * PLAYERSCALE}, {player.position.x - 200, player.position.y}, WHITE);
@@ -399,7 +337,7 @@ int main(void)
                         break;
                 }
                 
-                
+                //linear interpolated the value of the health bar for a smoother motion
                 ui.HealthWidthE = lerp(ui.HealthWidthE, lerp(0, 500, enemy.health/enemy.maxHealth), 0.2);
                 //Draws the gray background for the bar when it gets depleted 
                 DrawRectangle(900, -100, 500, 25, GRAY);
@@ -415,9 +353,10 @@ int main(void)
                 //UI elements past this point
 
                 
-                
+                //linear interpolated the bar
                 BarPos = lerpV(BarPos, ui.BarPos, 0.2);
                 
+                //if the player clicks the enemy it zooms in on them
                 if(IsMouseButtonPressed(0) && CheckCollisionPointRec({GetMouseX(), GetMouseY()}, {enemy.position.x, enemy.position.y, enemy.width, enemy.height})){
                     enemyView = true;
                 }
@@ -469,7 +408,7 @@ int main(void)
                       spinA = 0;
                   }
                 
-                
+                //allows the clicking of the buttons
                 if(ui.menu == 0){
                     if(CheckCollisionPointTriangle({GetMouseX(), GetMouseY()}, pos, {pos.x, pos.y + 200}, {pos.x + 200, pos.y})){
                         ui.UIWheel = 4;
@@ -500,17 +439,15 @@ int main(void)
                     }
                 }
                 
-                /*
-                if(IsMouseButtonPressed(0) && ui.UIWheel != 0){
-                    ui.menu = 1;
-                }
-                */
+           
                 if(IsMouseButtonPressed(1)){
                     ui.menu = 0;
                 }
         
                 
                 //DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline   
+                
+                //draws the ui based on its state
                 switch(ui.menu){
                     
                     case 0:
