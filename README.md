@@ -6,3 +6,4 @@ When you look at ChronoQuestCombat.exe ensure you are on the main branch, and fo
 controls for ChronoQuestCombat.exe are primarily left click mouse and to back out of menu's its right click you can also click on the enemy to see him up close.
 controls for ChronoQuestOverworld.exe is simply arrow keys.
 We know its not much, but this is what we got!
+(This game was designed to run on windows machines)
